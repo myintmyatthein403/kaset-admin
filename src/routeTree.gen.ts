@@ -14,7 +14,11 @@ import { Route as AuthIndexRouteImport } from './routes/_auth.index'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthSlideShowRouteImport } from './routes/_auth/slide-show'
+import { Route as AuthSettingLogoRouteImport } from './routes/_auth/setting/logo'
+import { Route as AuthSettingHomePageSlideShowRouteImport } from './routes/_auth/setting/home-page-slide-show'
+import { Route as AuthSettingFaqRouteImport } from './routes/_auth/setting/faq'
 import { Route as AuthMusicTracksRouteImport } from './routes/_auth/music/tracks'
+import { Route as AuthMusicAlbumsRouteImport } from './routes/_auth/music/albums'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -40,9 +44,30 @@ const AuthSlideShowRoute = AuthSlideShowRouteImport.update({
   path: '/slide-show',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthSettingLogoRoute = AuthSettingLogoRouteImport.update({
+  id: '/setting/logo',
+  path: '/setting/logo',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSettingHomePageSlideShowRoute =
+  AuthSettingHomePageSlideShowRouteImport.update({
+    id: '/setting/home-page-slide-show',
+    path: '/setting/home-page-slide-show',
+    getParentRoute: () => AuthRoute,
+  } as any)
+const AuthSettingFaqRoute = AuthSettingFaqRouteImport.update({
+  id: '/setting/faq',
+  path: '/setting/faq',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthMusicTracksRoute = AuthMusicTracksRouteImport.update({
   id: '/music/tracks',
   path: '/music/tracks',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthMusicAlbumsRoute = AuthMusicAlbumsRouteImport.update({
+  id: '/music/albums',
+  path: '/music/albums',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -51,14 +76,22 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AuthIndexRoute
+  '/music/albums': typeof AuthMusicAlbumsRoute
   '/music/tracks': typeof AuthMusicTracksRoute
+  '/setting/faq': typeof AuthSettingFaqRoute
+  '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
+  '/setting/logo': typeof AuthSettingLogoRoute
 }
 export interface FileRoutesByTo {
   '/slide-show': typeof AuthSlideShowRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AuthIndexRoute
+  '/music/albums': typeof AuthMusicAlbumsRoute
   '/music/tracks': typeof AuthMusicTracksRoute
+  '/setting/faq': typeof AuthSettingFaqRoute
+  '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
+  '/setting/logo': typeof AuthSettingLogoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,7 +100,11 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/_auth/': typeof AuthIndexRoute
+  '/_auth/music/albums': typeof AuthMusicAlbumsRoute
   '/_auth/music/tracks': typeof AuthMusicTracksRoute
+  '/_auth/setting/faq': typeof AuthSettingFaqRoute
+  '/_auth/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
+  '/_auth/setting/logo': typeof AuthSettingLogoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -76,9 +113,22 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/'
+    | '/music/albums'
     | '/music/tracks'
+    | '/setting/faq'
+    | '/setting/home-page-slide-show'
+    | '/setting/logo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/slide-show' | '/auth/login' | '/auth/register' | '/' | '/music/tracks'
+  to:
+    | '/slide-show'
+    | '/auth/login'
+    | '/auth/register'
+    | '/'
+    | '/music/albums'
+    | '/music/tracks'
+    | '/setting/faq'
+    | '/setting/home-page-slide-show'
+    | '/setting/logo'
   id:
     | '__root__'
     | '/_auth'
@@ -86,7 +136,11 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/_auth/'
+    | '/_auth/music/albums'
     | '/_auth/music/tracks'
+    | '/_auth/setting/faq'
+    | '/_auth/setting/home-page-slide-show'
+    | '/_auth/setting/logo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,11 +186,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSlideShowRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/setting/logo': {
+      id: '/_auth/setting/logo'
+      path: '/setting/logo'
+      fullPath: '/setting/logo'
+      preLoaderRoute: typeof AuthSettingLogoRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/setting/home-page-slide-show': {
+      id: '/_auth/setting/home-page-slide-show'
+      path: '/setting/home-page-slide-show'
+      fullPath: '/setting/home-page-slide-show'
+      preLoaderRoute: typeof AuthSettingHomePageSlideShowRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/setting/faq': {
+      id: '/_auth/setting/faq'
+      path: '/setting/faq'
+      fullPath: '/setting/faq'
+      preLoaderRoute: typeof AuthSettingFaqRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/music/tracks': {
       id: '/_auth/music/tracks'
       path: '/music/tracks'
       fullPath: '/music/tracks'
       preLoaderRoute: typeof AuthMusicTracksRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/music/albums': {
+      id: '/_auth/music/albums'
+      path: '/music/albums'
+      fullPath: '/music/albums'
+      preLoaderRoute: typeof AuthMusicAlbumsRouteImport
       parentRoute: typeof AuthRoute
     }
   }
@@ -145,13 +227,21 @@ declare module '@tanstack/react-router' {
 interface AuthRouteChildren {
   AuthSlideShowRoute: typeof AuthSlideShowRoute
   AuthIndexRoute: typeof AuthIndexRoute
+  AuthMusicAlbumsRoute: typeof AuthMusicAlbumsRoute
   AuthMusicTracksRoute: typeof AuthMusicTracksRoute
+  AuthSettingFaqRoute: typeof AuthSettingFaqRoute
+  AuthSettingHomePageSlideShowRoute: typeof AuthSettingHomePageSlideShowRoute
+  AuthSettingLogoRoute: typeof AuthSettingLogoRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthSlideShowRoute: AuthSlideShowRoute,
   AuthIndexRoute: AuthIndexRoute,
+  AuthMusicAlbumsRoute: AuthMusicAlbumsRoute,
   AuthMusicTracksRoute: AuthMusicTracksRoute,
+  AuthSettingFaqRoute: AuthSettingFaqRoute,
+  AuthSettingHomePageSlideShowRoute: AuthSettingHomePageSlideShowRoute,
+  AuthSettingLogoRoute: AuthSettingLogoRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

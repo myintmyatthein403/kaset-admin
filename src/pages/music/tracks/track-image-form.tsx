@@ -1,4 +1,4 @@
-import { FileUploader } from '@/src/common/components/custom/input/file-uploader';
+import { FileUploader } from '@/components/custom/input/file-uploader';
 
 interface TrackImageFormProps {
   form: any;

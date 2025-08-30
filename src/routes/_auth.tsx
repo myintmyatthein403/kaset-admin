@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Outlet, redirect } from '@tanstack/react-router'
-import { SideBarLayout } from '@/src/common/components/layouts/side-bar.layout'
-import { useAuthStore } from '@/src/common/store/authStore'
+import { SideBarLayout } from '@/components/layouts/side-bar.layout'
+import { useAuthStore } from '@/common/store/authStore'
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: () => {

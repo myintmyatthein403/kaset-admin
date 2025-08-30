@@ -1,4 +1,4 @@
-import { fetcher } from "../lib/axios";
+import { fetcher } from "@/lib/axios";
 import { useAuthStore } from "../store/authStore";
 
 export const tokenService = {

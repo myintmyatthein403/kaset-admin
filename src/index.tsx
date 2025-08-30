@@ -5,7 +5,7 @@ import { ThemeProvider } from './common/providers/theme-provider';
 import { routeTree } from './routeTree.gen';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryProviders } from './common/providers/query-provider';
-import { useAuth } from './common/hooks/use-auth.hook';
+import { useAuth } from '@/hooks/use-auth.hook';
 import { Toaster } from 'sonner';
 
 const router = createRouter({

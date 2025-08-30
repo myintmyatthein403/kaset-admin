@@ -1,7 +1,7 @@
-import { TrackCard } from "@/src/common/components/custom/card/track-card";
-import { CustomDrawer as Drawer } from "@/src/common/components/custom/drawer/drawer";
-import { Stepper } from "@/src/common/components/custom/stepper/stepper";
-import { fetchData, fetcher } from "@/src/common/lib/axios";
+import { TrackCard } from "@/components/custom/card/track-card";
+import { CustomDrawer as Drawer } from "@/components/custom/drawer/drawer";
+import { Stepper } from "@/components/custom/stepper/stepper";
+import { fetchData, fetcher } from "@/lib/axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TrackInfo } from "./track-info";
 import { useForm } from "@tanstack/react-form";
@@ -9,9 +9,9 @@ import { TrackImageForm } from "./track-image-form";
 import { PlatformLink } from "./platform-link";
 import { ReviewForm } from "./review-form";
 import { useState } from "react";
-import { tokenService } from "@/src/common/services/token.service";
+import { tokenService } from "@/common/services/token.service";
 import { toast } from 'sonner';
-import { config } from "@/src/common/config/config";
+import { config } from "@/common/config/config";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/src/common/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 
 export const TrackPage = () => {
   const queryClient = useQueryClient();

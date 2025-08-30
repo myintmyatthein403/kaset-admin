@@ -1,5 +1,5 @@
-import { Label } from '@/src/common/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/common/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMemo } from 'react';
 
 interface ReviewFormProps {

@@ -1,13 +1,13 @@
-import { Button } from "@/src/common/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/src/common/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { X } from "lucide-react";
 import { useForm } from '@tanstack/react-form'
-import { Toaster } from "@/src/common/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { toast } from 'sonner'
-import { InputField, PasswordField } from "@/src/common/components/custom/input/input-field";
-import { ModeToggle } from "@/src/common/components/custom/button/mode-toggle";
-import { useRegister } from "@/src/common/hooks/user-register.hook";
-import { type RegisterSchemaType, registerSchema } from "@/src/common/schemas/register.schema";
+import { InputField, PasswordField } from "@/components/custom/input/input-field";
+import { ModeToggle } from "@/components/custom/button/mode-toggle";
+import { useRegister } from "@/hooks/user-register.hook";
+import { type RegisterSchemaType, registerSchema } from "@/common/schemas/register.schema";
 
 export const RegisterPage = () => {
   const register = useRegister()

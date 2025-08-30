@@ -1,4 +1,4 @@
-import { InputField } from "@/src/common/components/custom/input/input-field"
+import { InputField } from "@/components/custom/input/input-field"
 
 export const PlatformLink = ({ form }: { form: any }) => {
   return (

@@ -1,17 +1,17 @@
-import { Button } from "@/src/common/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/src/common/components/ui/card";
-import { Checkbox } from "@/src/common/components/ui/checkbox";
-import { Input } from "@/src/common/components/ui/input";
-import { Label } from "@/src/common/components/ui/label";
-import { useLogin } from "@/src/common/hooks/use-login.hook";
-import { type LoginSchemaType, loginSchema } from "@/src/common/schemas/login.schema";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useLogin } from "@/hooks/use-login.hook";
+import { type LoginSchemaType, loginSchema } from "@/common/schemas/login.schema";
 import { X, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
 import { useForm } from '@tanstack/react-form'
-import { Toaster } from "@/src/common/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { toast } from 'sonner'
-import { InputField } from "@/src/common/components/custom/input/input-field";
-import { ModeToggle } from "@/src/common/components/custom/button/mode-toggle";
+import { InputField } from "@/components/custom/input/input-field";
+import { ModeToggle } from "@/components/custom/button/mode-toggle";
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);

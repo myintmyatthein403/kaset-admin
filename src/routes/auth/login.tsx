@@ -1,5 +1,5 @@
-import { useAuthStore } from '@/src/common/store/authStore';
-import { LoginPage } from '@/src/pages/auth/login';
+import { useAuthStore } from '@/common/store/authStore';
+import { LoginPage } from '@/pages/auth/login';
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/auth/login')({

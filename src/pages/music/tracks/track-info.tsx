@@ -1,4 +1,4 @@
-import { DescriptionField, InputField, SlugField } from "@/src/common/components/custom/input/input-field"
+import { DescriptionField, InputField, SlugField } from "@/components/custom/input/input-field"
 
 export const TrackInfo = ({ form }: { form: any }) => {
   // const [isSpinning, setIsSpinning] = useState<boolean>(false)

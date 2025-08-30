@@ -14,6 +14,13 @@ import {
   FileType,
   Shield,
   Music,
+  Album,
+  Image,
+  ImagePlay,
+  CircleQuestionMark,
+  ListMusic,
+  Shirt,
+  ChartBarStacked,
 } from "lucide-react";
 
 export const sidebarGroups = [
@@ -41,19 +48,19 @@ export const sidebarGroups = [
         icon: Search,
       },
     ],
-  },
+  },*/
   {
-    label: "Content Management",
+    label: "Product Management",
     items: [
       {
-        title: "Slide Show",
-        url: "/slide-show",
-        icon: Briefcase,
+        title: "Product",
+        url: "/products",
+        icon: Shirt,
       },
       {
-        title: "Applications",
-        url: "/jobs/applications",
-        icon: FileText,
+        title: "Product Category",
+        url: "/product/product-categories",
+        icon: ChartBarStacked,
       },
       {
         title: "Job Types",
@@ -71,7 +78,7 @@ export const sidebarGroups = [
         icon: HeartHandshake,
       },
     ],
-  },*/
+  },
   {
     label: "Music Management",
     items: [
@@ -80,6 +87,16 @@ export const sidebarGroups = [
         url: "/music/tracks",
         icon: Music,
       },
+      {
+        title: "Albums",
+        url: "/music/albums",
+        icon: Album,
+      },
+      {
+        title: "Genre",
+        url: "/music/genre",
+        icon: ListMusic,
+      }
     ],
   },
   /*{
@@ -106,7 +123,7 @@ export const sidebarGroups = [
         icon: User,
       },
     ],
-  },
+  },*/
   {
     label: "System",
     items: [
@@ -115,6 +132,21 @@ export const sidebarGroups = [
         url: "/settings",
         icon: Settings,
       },
+      {
+        title: "Logo",
+        url: "/setting/logo",
+        icon: Image,
+      },
+      {
+        title: "Slide Show",
+        url: "/setting/home-page-slide-show",
+        icon: ImagePlay
+      },
+      {
+        title: "FAQ",
+        url: "/setting/faq",
+        icon: CircleQuestionMark
+      }
     ],
-  },*/
+  },
 ];
