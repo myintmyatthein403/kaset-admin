@@ -29,7 +29,7 @@ export function ActionSheet({
 }: ActionSheetProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="p-4 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
+      <SheetContent className="p-4 sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-auto">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           <SheetDescription>

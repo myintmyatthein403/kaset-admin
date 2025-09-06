@@ -21,6 +21,7 @@ import {
   ListMusic,
   Shirt,
   ChartBarStacked,
+  Database,
 } from "lucide-react";
 
 export const sidebarGroups = [
@@ -54,7 +55,7 @@ export const sidebarGroups = [
     items: [
       {
         title: "Product",
-        url: "/products",
+        url: "/product/products",
         icon: Shirt,
       },
       {
@@ -94,8 +95,13 @@ export const sidebarGroups = [
       },
       {
         title: "Genre",
-        url: "/music/genre",
+        url: "/music/genres",
         icon: ListMusic,
+      },
+      {
+        title: "Data-Collect",
+        url: "/music/data-collect",
+        icon: Database
       }
     ],
   },
@@ -128,8 +134,8 @@ export const sidebarGroups = [
     label: "System",
     items: [
       {
-        title: "Settings",
-        url: "/settings",
+        title: "Setting",
+        url: "/setting",
         icon: Settings,
       },
       {

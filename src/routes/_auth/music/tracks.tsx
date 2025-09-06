@@ -1,4 +1,4 @@
-import { TrackPage } from '@/pages/music/tracks'
+import { TrackPage } from '@/pages/music/track'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_auth/music/tracks')({

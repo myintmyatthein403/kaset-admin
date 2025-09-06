@@ -27,20 +27,22 @@ export const ActionFormDialog = ({
       <DialogTrigger asChild>
         {actionButton}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-1/2">
+      <DialogContent className="sm:max-w-1/2 overflow-auto max-h-[80vh]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <form onSubmit={onFormSubmit}>
-          {createForm}
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter>
-        </form>
+        <div className="overflow-y-auto">
+          <form onSubmit={onFormSubmit}>
+            {createForm}
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
