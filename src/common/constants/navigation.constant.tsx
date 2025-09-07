@@ -22,6 +22,7 @@ import {
   Shirt,
   ChartBarStacked,
   Database,
+  Link
 } from "lucide-react";
 
 export const sidebarGroups = [
@@ -152,6 +153,11 @@ export const sidebarGroups = [
         title: "FAQ",
         url: "/setting/faq",
         icon: CircleQuestionMark
+      },
+      {
+        title: "Social Link",
+        url: "/setting/social-link",
+        icon: Link
       }
     ],
   },

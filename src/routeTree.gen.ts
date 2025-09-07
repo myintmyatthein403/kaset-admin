@@ -15,6 +15,7 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthSlideShowRouteImport } from './routes/_auth/slide-show'
 import { Route as AuthSettingIndexRouteImport } from './routes/_auth/setting/index'
+import { Route as AuthSettingSocialLinkRouteImport } from './routes/_auth/setting/social-link'
 import { Route as AuthSettingLogoRouteImport } from './routes/_auth/setting/logo'
 import { Route as AuthSettingHomePageSlideShowRouteImport } from './routes/_auth/setting/home-page-slide-show'
 import { Route as AuthSettingFaqRouteImport } from './routes/_auth/setting/faq'
@@ -52,6 +53,11 @@ const AuthSlideShowRoute = AuthSlideShowRouteImport.update({
 const AuthSettingIndexRoute = AuthSettingIndexRouteImport.update({
   id: '/setting/',
   path: '/setting/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSettingSocialLinkRoute = AuthSettingSocialLinkRouteImport.update({
+  id: '/setting/social-link',
+  path: '/setting/social-link',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthSettingLogoRoute = AuthSettingLogoRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/setting/logo': typeof AuthSettingLogoRoute
+  '/setting/social-link': typeof AuthSettingSocialLinkRoute
   '/setting': typeof AuthSettingIndexRoute
 }
 export interface FileRoutesByTo {
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/setting/logo': typeof AuthSettingLogoRoute
+  '/setting/social-link': typeof AuthSettingSocialLinkRoute
   '/setting': typeof AuthSettingIndexRoute
 }
 export interface FileRoutesById {
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/_auth/setting/faq': typeof AuthSettingFaqRoute
   '/_auth/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/_auth/setting/logo': typeof AuthSettingLogoRoute
+  '/_auth/setting/social-link': typeof AuthSettingSocialLinkRoute
   '/_auth/setting/': typeof AuthSettingIndexRoute
 }
 export interface FileRouteTypes {
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/setting/faq'
     | '/setting/home-page-slide-show'
     | '/setting/logo'
+    | '/setting/social-link'
     | '/setting'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/setting/faq'
     | '/setting/home-page-slide-show'
     | '/setting/logo'
+    | '/setting/social-link'
     | '/setting'
   id:
     | '__root__'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/_auth/setting/faq'
     | '/_auth/setting/home-page-slide-show'
     | '/_auth/setting/logo'
+    | '/_auth/setting/social-link'
     | '/_auth/setting/'
   fileRoutesById: FileRoutesById
 }
@@ -252,6 +264,13 @@ declare module '@tanstack/react-router' {
       path: '/setting'
       fullPath: '/setting'
       preLoaderRoute: typeof AuthSettingIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/setting/social-link': {
+      id: '/_auth/setting/social-link'
+      path: '/setting/social-link'
+      fullPath: '/setting/social-link'
+      preLoaderRoute: typeof AuthSettingSocialLinkRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/setting/logo': {
@@ -332,6 +351,7 @@ interface AuthRouteChildren {
   AuthSettingFaqRoute: typeof AuthSettingFaqRoute
   AuthSettingHomePageSlideShowRoute: typeof AuthSettingHomePageSlideShowRoute
   AuthSettingLogoRoute: typeof AuthSettingLogoRoute
+  AuthSettingSocialLinkRoute: typeof AuthSettingSocialLinkRoute
   AuthSettingIndexRoute: typeof AuthSettingIndexRoute
 }
 
@@ -347,6 +367,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthSettingFaqRoute: AuthSettingFaqRoute,
   AuthSettingHomePageSlideShowRoute: AuthSettingHomePageSlideShowRoute,
   AuthSettingLogoRoute: AuthSettingLogoRoute,
+  AuthSettingSocialLinkRoute: AuthSettingSocialLinkRoute,
   AuthSettingIndexRoute: AuthSettingIndexRoute,
 }
 
