@@ -15,12 +15,16 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthSlideShowRouteImport } from './routes/_auth/slide-show'
 import { Route as AuthSettingIndexRouteImport } from './routes/_auth/setting/index'
+import { Route as AuthUserManagementRolesRouteImport } from './routes/_auth/user-management/roles'
+import { Route as AuthUserManagementArtistRouteImport } from './routes/_auth/user-management/artist'
 import { Route as AuthSettingSocialLinkRouteImport } from './routes/_auth/setting/social-link'
+import { Route as AuthSettingPlatformsRouteImport } from './routes/_auth/setting/platforms'
 import { Route as AuthSettingLogoRouteImport } from './routes/_auth/setting/logo'
 import { Route as AuthSettingHomePageSlideShowRouteImport } from './routes/_auth/setting/home-page-slide-show'
 import { Route as AuthSettingFaqRouteImport } from './routes/_auth/setting/faq'
 import { Route as AuthProductProductsRouteImport } from './routes/_auth/product/products'
 import { Route as AuthProductProductCategoriesRouteImport } from './routes/_auth/product/product-categories'
+import { Route as AuthProductOrdersRouteImport } from './routes/_auth/product/orders'
 import { Route as AuthMusicTracksRouteImport } from './routes/_auth/music/tracks'
 import { Route as AuthMusicGenresRouteImport } from './routes/_auth/music/genres'
 import { Route as AuthMusicDataCollectRouteImport } from './routes/_auth/music/data-collect'
@@ -55,9 +59,25 @@ const AuthSettingIndexRoute = AuthSettingIndexRouteImport.update({
   path: '/setting/',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthUserManagementRolesRoute = AuthUserManagementRolesRouteImport.update({
+  id: '/user-management/roles',
+  path: '/user-management/roles',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthUserManagementArtistRoute =
+  AuthUserManagementArtistRouteImport.update({
+    id: '/user-management/artist',
+    path: '/user-management/artist',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const AuthSettingSocialLinkRoute = AuthSettingSocialLinkRouteImport.update({
   id: '/setting/social-link',
   path: '/setting/social-link',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSettingPlatformsRoute = AuthSettingPlatformsRouteImport.update({
+  id: '/setting/platforms',
+  path: '/setting/platforms',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthSettingLogoRoute = AuthSettingLogoRouteImport.update({
@@ -87,6 +107,11 @@ const AuthProductProductCategoriesRoute =
     path: '/product/product-categories',
     getParentRoute: () => AuthRoute,
   } as any)
+const AuthProductOrdersRoute = AuthProductOrdersRouteImport.update({
+  id: '/product/orders',
+  path: '/product/orders',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthMusicTracksRoute = AuthMusicTracksRouteImport.update({
   id: '/music/tracks',
   path: '/music/tracks',
@@ -117,12 +142,16 @@ export interface FileRoutesByFullPath {
   '/music/data-collect': typeof AuthMusicDataCollectRoute
   '/music/genres': typeof AuthMusicGenresRoute
   '/music/tracks': typeof AuthMusicTracksRoute
+  '/product/orders': typeof AuthProductOrdersRoute
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/product/products': typeof AuthProductProductsRoute
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/setting/logo': typeof AuthSettingLogoRoute
+  '/setting/platforms': typeof AuthSettingPlatformsRoute
   '/setting/social-link': typeof AuthSettingSocialLinkRoute
+  '/user-management/artist': typeof AuthUserManagementArtistRoute
+  '/user-management/roles': typeof AuthUserManagementRolesRoute
   '/setting': typeof AuthSettingIndexRoute
 }
 export interface FileRoutesByTo {
@@ -134,12 +163,16 @@ export interface FileRoutesByTo {
   '/music/data-collect': typeof AuthMusicDataCollectRoute
   '/music/genres': typeof AuthMusicGenresRoute
   '/music/tracks': typeof AuthMusicTracksRoute
+  '/product/orders': typeof AuthProductOrdersRoute
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/product/products': typeof AuthProductProductsRoute
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/setting/logo': typeof AuthSettingLogoRoute
+  '/setting/platforms': typeof AuthSettingPlatformsRoute
   '/setting/social-link': typeof AuthSettingSocialLinkRoute
+  '/user-management/artist': typeof AuthUserManagementArtistRoute
+  '/user-management/roles': typeof AuthUserManagementRolesRoute
   '/setting': typeof AuthSettingIndexRoute
 }
 export interface FileRoutesById {
@@ -153,12 +186,16 @@ export interface FileRoutesById {
   '/_auth/music/data-collect': typeof AuthMusicDataCollectRoute
   '/_auth/music/genres': typeof AuthMusicGenresRoute
   '/_auth/music/tracks': typeof AuthMusicTracksRoute
+  '/_auth/product/orders': typeof AuthProductOrdersRoute
   '/_auth/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/_auth/product/products': typeof AuthProductProductsRoute
   '/_auth/setting/faq': typeof AuthSettingFaqRoute
   '/_auth/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/_auth/setting/logo': typeof AuthSettingLogoRoute
+  '/_auth/setting/platforms': typeof AuthSettingPlatformsRoute
   '/_auth/setting/social-link': typeof AuthSettingSocialLinkRoute
+  '/_auth/user-management/artist': typeof AuthUserManagementArtistRoute
+  '/_auth/user-management/roles': typeof AuthUserManagementRolesRoute
   '/_auth/setting/': typeof AuthSettingIndexRoute
 }
 export interface FileRouteTypes {
@@ -172,12 +209,16 @@ export interface FileRouteTypes {
     | '/music/data-collect'
     | '/music/genres'
     | '/music/tracks'
+    | '/product/orders'
     | '/product/product-categories'
     | '/product/products'
     | '/setting/faq'
     | '/setting/home-page-slide-show'
     | '/setting/logo'
+    | '/setting/platforms'
     | '/setting/social-link'
+    | '/user-management/artist'
+    | '/user-management/roles'
     | '/setting'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -189,12 +230,16 @@ export interface FileRouteTypes {
     | '/music/data-collect'
     | '/music/genres'
     | '/music/tracks'
+    | '/product/orders'
     | '/product/product-categories'
     | '/product/products'
     | '/setting/faq'
     | '/setting/home-page-slide-show'
     | '/setting/logo'
+    | '/setting/platforms'
     | '/setting/social-link'
+    | '/user-management/artist'
+    | '/user-management/roles'
     | '/setting'
   id:
     | '__root__'
@@ -207,12 +252,16 @@ export interface FileRouteTypes {
     | '/_auth/music/data-collect'
     | '/_auth/music/genres'
     | '/_auth/music/tracks'
+    | '/_auth/product/orders'
     | '/_auth/product/product-categories'
     | '/_auth/product/products'
     | '/_auth/setting/faq'
     | '/_auth/setting/home-page-slide-show'
     | '/_auth/setting/logo'
+    | '/_auth/setting/platforms'
     | '/_auth/setting/social-link'
+    | '/_auth/user-management/artist'
+    | '/_auth/user-management/roles'
     | '/_auth/setting/'
   fileRoutesById: FileRoutesById
 }
@@ -266,11 +315,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSettingIndexRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/user-management/roles': {
+      id: '/_auth/user-management/roles'
+      path: '/user-management/roles'
+      fullPath: '/user-management/roles'
+      preLoaderRoute: typeof AuthUserManagementRolesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/user-management/artist': {
+      id: '/_auth/user-management/artist'
+      path: '/user-management/artist'
+      fullPath: '/user-management/artist'
+      preLoaderRoute: typeof AuthUserManagementArtistRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/setting/social-link': {
       id: '/_auth/setting/social-link'
       path: '/setting/social-link'
       fullPath: '/setting/social-link'
       preLoaderRoute: typeof AuthSettingSocialLinkRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/setting/platforms': {
+      id: '/_auth/setting/platforms'
+      path: '/setting/platforms'
+      fullPath: '/setting/platforms'
+      preLoaderRoute: typeof AuthSettingPlatformsRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/setting/logo': {
@@ -306,6 +376,13 @@ declare module '@tanstack/react-router' {
       path: '/product/product-categories'
       fullPath: '/product/product-categories'
       preLoaderRoute: typeof AuthProductProductCategoriesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/product/orders': {
+      id: '/_auth/product/orders'
+      path: '/product/orders'
+      fullPath: '/product/orders'
+      preLoaderRoute: typeof AuthProductOrdersRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/music/tracks': {
@@ -346,12 +423,16 @@ interface AuthRouteChildren {
   AuthMusicDataCollectRoute: typeof AuthMusicDataCollectRoute
   AuthMusicGenresRoute: typeof AuthMusicGenresRoute
   AuthMusicTracksRoute: typeof AuthMusicTracksRoute
+  AuthProductOrdersRoute: typeof AuthProductOrdersRoute
   AuthProductProductCategoriesRoute: typeof AuthProductProductCategoriesRoute
   AuthProductProductsRoute: typeof AuthProductProductsRoute
   AuthSettingFaqRoute: typeof AuthSettingFaqRoute
   AuthSettingHomePageSlideShowRoute: typeof AuthSettingHomePageSlideShowRoute
   AuthSettingLogoRoute: typeof AuthSettingLogoRoute
+  AuthSettingPlatformsRoute: typeof AuthSettingPlatformsRoute
   AuthSettingSocialLinkRoute: typeof AuthSettingSocialLinkRoute
+  AuthUserManagementArtistRoute: typeof AuthUserManagementArtistRoute
+  AuthUserManagementRolesRoute: typeof AuthUserManagementRolesRoute
   AuthSettingIndexRoute: typeof AuthSettingIndexRoute
 }
 
@@ -362,12 +443,16 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthMusicDataCollectRoute: AuthMusicDataCollectRoute,
   AuthMusicGenresRoute: AuthMusicGenresRoute,
   AuthMusicTracksRoute: AuthMusicTracksRoute,
+  AuthProductOrdersRoute: AuthProductOrdersRoute,
   AuthProductProductCategoriesRoute: AuthProductProductCategoriesRoute,
   AuthProductProductsRoute: AuthProductProductsRoute,
   AuthSettingFaqRoute: AuthSettingFaqRoute,
   AuthSettingHomePageSlideShowRoute: AuthSettingHomePageSlideShowRoute,
   AuthSettingLogoRoute: AuthSettingLogoRoute,
+  AuthSettingPlatformsRoute: AuthSettingPlatformsRoute,
   AuthSettingSocialLinkRoute: AuthSettingSocialLinkRoute,
+  AuthUserManagementArtistRoute: AuthUserManagementArtistRoute,
+  AuthUserManagementRolesRoute: AuthUserManagementRolesRoute,
   AuthSettingIndexRoute: AuthSettingIndexRoute,
 }
 

@@ -1,17 +1,6 @@
 import {
-  Home,
-  Briefcase,
-  Users,
-  FileText,
-  Tag,
-  HeartHandshake,
-  Building,
   User,
-  Inbox,
-  Calendar,
-  Search,
   Settings,
-  FileType,
   Shield,
   Music,
   Album,
@@ -22,11 +11,17 @@ import {
   Shirt,
   ChartBarStacked,
   Database,
-  Link
+  Link,
+  Calendar,
+  Home,
+  Inbox,
+  Search,
+  ShoppingBasket,
+  Globe
 } from "lucide-react";
 
 export const sidebarGroups = [
-  /*{
+  {
     label: "General",
     items: [
       {
@@ -50,7 +45,7 @@ export const sidebarGroups = [
         icon: Search,
       },
     ],
-  },*/
+  },
   {
     label: "Product Management",
     items: [
@@ -65,20 +60,10 @@ export const sidebarGroups = [
         icon: ChartBarStacked,
       },
       {
-        title: "Job Types",
-        url: "/jobs/types",
-        icon: FileType,
-      },
-      {
-        title: "Tags",
-        url: "/jobs/tags",
-        icon: Tag,
-      },
-      {
-        title: "Benefits",
-        url: "/jobs/benefits",
-        icon: HeartHandshake,
-      },
+        title: "Order",
+        url: "/product/orders",
+        icon: ShoppingBasket
+      }
     ],
   },
   {
@@ -106,22 +91,12 @@ export const sidebarGroups = [
       }
     ],
   },
-  /*{
+  {
     label: "User Management",
     items: [
       {
-        title: "Employers",
-        url: "/user-management/employers",
-        icon: Building,
-      },
-      {
-        title: "Employees",
-        url: "/users/employees",
-        icon: Users,
-      },
-      {
-        title: "Admins",
-        url: "/users/admins",
+        title: "Artists",
+        url: "/user-management/artist",
         icon: Shield
       },
       {
@@ -129,8 +104,13 @@ export const sidebarGroups = [
         url: "/profile",
         icon: User,
       },
+      {
+        title: "Roles",
+        url: "/user-management/roles",
+        icon: Shield
+      }
     ],
-  },*/
+  },
   {
     label: "System",
     items: [
@@ -153,6 +133,11 @@ export const sidebarGroups = [
         title: "FAQ",
         url: "/setting/faq",
         icon: CircleQuestionMark
+      },
+      {
+        title: "Platform",
+        url: "/setting/platforms",
+        icon: Globe
       },
       {
         title: "Social Link",

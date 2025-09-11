@@ -1,4 +1,4 @@
-import { type GENRE } from "@/common/types/type";
+import { type ROLE } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -11,10 +11,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import type { genreSchemaType } from "@/common/schemas/genre.schema";
-import { OrderForm } from "./component/action-form";
+import { RoleForm } from "./components/action-form";
+import type { RoleSchemaType } from "@/common/schemas/role.schema";
 
-export const OrderPage = () => {
+export const RolePage = () => {
   const {
     data,
     isPending,
@@ -22,10 +22,10 @@ export const OrderPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<genreSchemaType>('genres', '/genres')
+  } = useBaseHook<RoleSchemaType>('roles', '/roles')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<GENRE | null>(null);
+  const [editedItem, setEditedItem] = useState<ROLE | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -50,7 +50,7 @@ export const OrderPage = () => {
           await updateMutation.mutateAsync({ ...value, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(value as genreSchemaType);
+          await createMutation.mutateAsync(value as RoleSchemaType);
         }
         setOpen(false);
         form.reset();
@@ -62,17 +62,16 @@ export const OrderPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: GENRE) => {
+  const handleEdit = (item: ROLE) => {
     setEditedItem(item);
     form.setFieldValue("name", item.name);
-    form.setFieldValue("description", item.description);
   }
 
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<GENRE>[] = [
+  const columns: ColumnDef<ROLE>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -97,23 +96,16 @@ export const OrderPage = () => {
     },
     {
       accessorKey: "name",
-      header: "name",
+      header: "Name",
       cell: ({ row }) => (
         <div>{row.getValue("name")}</div>
       ),
     },
     {
-      accessorKey: "description",
-      header: "description",
-      cell: ({ row }) => (
-        <div>{row.getValue("description") || '-'}</div>
-      )
-    },
-    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as GENRE;
+        const item = row.original as ROLE;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -143,7 +135,7 @@ export const OrderPage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Orders"
+        title="Roles"
         actionButton={
           <Button variant='outline' type="button" onClick={() => {
             setEditedItem(null);
@@ -155,7 +147,7 @@ export const OrderPage = () => {
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<OrderForm form={form} />}
+        createForm={<RoleForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -175,7 +167,7 @@ export const OrderPage = () => {
       <ActionSheet
         title="Edit Genre"
         description=""
-        updateForm={<OrderForm form={form} />}
+        updateForm={<RoleForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

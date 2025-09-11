@@ -1,4 +1,4 @@
-import { type GENRE } from "@/common/types/type";
+import { type MEDIA, type PLATFORM } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -11,21 +11,23 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import type { genreSchemaType } from "@/common/schemas/genre.schema";
-import { OrderForm } from "./component/action-form";
+import { PlatformForm } from "./components/action-from";
+import type { PlatformSchemaType } from "@/common/schemas/platform.schema";
+import { config } from "@/common/config/config";
 
-export const OrderPage = () => {
+export const PlatfromPage = () => {
   const {
     data,
     isPending,
     error,
     createMutation,
     updateMutation,
-    deleteMutation
-  } = useBaseHook<genreSchemaType>('genres', '/genres')
+    deleteMutation,
+    uploadMutation
+  } = useBaseHook<PlatformSchemaType>('platforms', '/platforms')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<GENRE | null>(null);
+  const [editedItem, setEditedItem] = useState<PLATFORM | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -42,15 +44,26 @@ export const OrderPage = () => {
   const form = useForm({
     defaultValues: {
       name: "",
-      description: ""
+      icon: null
     },
     onSubmit: async ({ value }) => {
       try {
+        let iconId = editedItem?.icon.id || "";
+
+        if (value.icon) {
+          const uploadImage = await uploadMutation.mutateAsync(value.icon);
+          iconId = uploadImage.id;
+        }
+        const payload = {
+          name: value.name,
+          icon: iconId ? { id: iconId } : undefined
+        }
+
         if (editedItem) {
-          await updateMutation.mutateAsync({ ...value, id: editedItem.id });
+          await updateMutation.mutateAsync({ ...payload, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(value as genreSchemaType);
+          await createMutation.mutateAsync(payload as PlatformSchemaType);
         }
         setOpen(false);
         form.reset();
@@ -62,17 +75,16 @@ export const OrderPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: GENRE) => {
+  const handleEdit = (item: PLATFORM) => {
     setEditedItem(item);
     form.setFieldValue("name", item.name);
-    form.setFieldValue("description", item.description);
   }
 
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<GENRE>[] = [
+  const columns: ColumnDef<PLATFORM>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -96,24 +108,27 @@ export const OrderPage = () => {
       enableHiding: false,
     },
     {
+      accessorKey: "icon",
+      header: "Icon",
+      cell: ({ row }) => {
+        const media = row.getValue('icon') as MEDIA;
+        if (!media || !media.url) return null;
+        const imgSrc = `${config.BASE_MEDIA_URL}${media.url}`;
+        return <img src={imgSrc} alt="home-slide-show" className="w-15 h-15 rounded-full" />;
+      },
+    },
+    {
       accessorKey: "name",
-      header: "name",
+      header: "Name",
       cell: ({ row }) => (
         <div>{row.getValue("name")}</div>
       ),
     },
     {
-      accessorKey: "description",
-      header: "description",
-      cell: ({ row }) => (
-        <div>{row.getValue("description") || '-'}</div>
-      )
-    },
-    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as GENRE;
+        const item = row.original as PLATFORM;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -143,7 +158,7 @@ export const OrderPage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Orders"
+        title="Platform"
         actionButton={
           <Button variant='outline' type="button" onClick={() => {
             setEditedItem(null);
@@ -155,7 +170,7 @@ export const OrderPage = () => {
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<OrderForm form={form} />}
+        createForm={<PlatformForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -175,7 +190,7 @@ export const OrderPage = () => {
       <ActionSheet
         title="Edit Genre"
         description=""
-        updateForm={<OrderForm form={form} />}
+        updateForm={<PlatformForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

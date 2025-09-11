@@ -67,12 +67,12 @@ export const SwitchField = ({
   );
 };
 
-export const DescriptionField = ({ field, className, required }: FieldComponentProps) => {
+export const DescriptionField = ({ field, title, placeholder, className, required }: FieldComponentProps) => {
   return (
-    <BaseField field={field} title="Description" required={required} className={className}>
+    <BaseField field={field} title={title} required={required} className={className}>
       <Textarea
         id={field.name}
-        placeholder="Provide a detailed description..."
+        placeholder={placeholder}
         value={field.state.value}
         onChange={(e) => field.handleChange(e.target.value)}
         className="rounded-md min-h-[100px]"

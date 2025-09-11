@@ -24,6 +24,27 @@ export type GENRE = BASE_TYPE & {
   description?: string | null;
 }
 
+export type USER_PROFILE = BASE_TYPE & {
+  name: string;
+  bio?: string;
+  location?: string;
+  email?: string;
+  cover_image?: MEDIA;
+  profile_image?: MEDIA;
+  generes?: GENRE[];
+  slug: string;
+  feature_videos?: MEDIA[];
+}
+
+export type ROLE = BASE_TYPE & {
+  name: string;
+}
+
+export type PLATFORM = BASE_TYPE & {
+  name: string;
+  icon: MEDIA;
+}
+
 export type SOCIAL_LINK = BASE_TYPE & {
   facebook_url?: string;
   twitter_url?: string;

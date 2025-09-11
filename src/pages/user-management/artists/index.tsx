@@ -1,4 +1,4 @@
-import { type GENRE } from "@/common/types/type";
+import { type USER_PROFILE } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -11,10 +11,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import type { genreSchemaType } from "@/common/schemas/genre.schema";
-import { OrderForm } from "./component/action-form";
+import { ArtistForm } from "./components/action-form";
+import type { ArtistSchemaType } from "@/common/schemas/artist.schema";
 
-export const OrderPage = () => {
+export const ArtistPage = () => {
   const {
     data,
     isPending,
@@ -22,10 +22,10 @@ export const OrderPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<genreSchemaType>('genres', '/genres')
+  } = useBaseHook<ArtistSchemaType>('artists', '/user-profile')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<GENRE | null>(null);
+  const [editedItem, setEditedItem] = useState<USER_PROFILE | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -39,18 +39,23 @@ export const OrderPage = () => {
     setIsDeleteDialogOpen(false);
   }
 
+  type FormValues = {
+    name: string;
+    pairs: { id: string; dropdownValue: string; textValue: string }[];
+  };
+
   const form = useForm({
     defaultValues: {
       name: "",
-      description: ""
-    },
+      pairs: [{ id: '', dropdownValue: '', textValue: '' }]
+    } as FormValues,
     onSubmit: async ({ value }) => {
       try {
         if (editedItem) {
           await updateMutation.mutateAsync({ ...value, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(value as genreSchemaType);
+          await createMutation.mutateAsync(value as ArtistSchemaType);
         }
         setOpen(false);
         form.reset();
@@ -62,17 +67,16 @@ export const OrderPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: GENRE) => {
+  const handleEdit = (item: USER_PROFILE) => {
     setEditedItem(item);
     form.setFieldValue("name", item.name);
-    form.setFieldValue("description", item.description);
   }
 
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<GENRE>[] = [
+  const columns: ColumnDef<USER_PROFILE>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -113,7 +117,7 @@ export const OrderPage = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as GENRE;
+        const item = row.original as USER_PROFILE;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -143,7 +147,7 @@ export const OrderPage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Orders"
+        title="Artist"
         actionButton={
           <Button variant='outline' type="button" onClick={() => {
             setEditedItem(null);
@@ -155,7 +159,7 @@ export const OrderPage = () => {
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<OrderForm form={form} />}
+        createForm={<ArtistForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -175,7 +179,7 @@ export const OrderPage = () => {
       <ActionSheet
         title="Edit Genre"
         description=""
-        updateForm={<OrderForm form={form} />}
+        updateForm={<ArtistForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
