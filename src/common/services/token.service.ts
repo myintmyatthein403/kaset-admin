@@ -3,19 +3,18 @@ import { useAuthStore } from "../store/authStore";
 
 export const tokenService = {
   getAccessToken: async (): Promise<string | null> => {
-    // You can access the Zustand store's state directly without a hook
 
     const refreshToken = useAuthStore.getState().refreshToken;
 
     if (refreshToken !== "") {
-      const { data } = await fetcher(`/auth/refresh-token`, {
+      const res = await fetcher(`/auth/refresh-token`, {
         method: "POST",
         data: {
           refreshToken,
         }
-      })
+      }) as any
 
-      return data.meta.accessToken
+      return res.data.meta.accessToken
     }
 
     return refreshToken;

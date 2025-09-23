@@ -6,7 +6,6 @@ interface StatusTextWithCircleProps {
 export const StatusTextWithCircle = ({ status, text }: StatusTextWithCircleProps) => {
   let textColorClass = 'text-gray-700';
   let circleColorClass = 'bg-gray-400';
-  console.log(status)
   switch (status) {
     case 'success':
       textColorClass = 'text-green-600';

@@ -17,7 +17,10 @@ import {
   Inbox,
   Search,
   ShoppingBasket,
-  Globe
+  Globe,
+  Key,
+  TrendingUp,
+  Flame
 } from "lucide-react";
 
 export const sidebarGroups = [
@@ -88,6 +91,16 @@ export const sidebarGroups = [
         title: "Data-Collect",
         url: "/music/data-collect",
         icon: Database
+      },
+      {
+        title: "Popular Tracks",
+        url: "/music/popular-tracks",
+        icon: TrendingUp
+      },
+      {
+        title: "Featured Artists",
+        url: "/music/featured-artists",
+        icon: Flame
       }
     ],
   },
@@ -115,9 +128,9 @@ export const sidebarGroups = [
     label: "System",
     items: [
       {
-        title: "Setting",
-        url: "/setting",
-        icon: Settings,
+        title: "Api Token",
+        url: "/setting/api-token",
+        icon: Key,
       },
       {
         title: "Logo",

@@ -7,6 +7,7 @@ import { VideoUploader } from "@/components/custom/input/video-uploader"
 import { Button } from "@/components/ui/button"
 import { useForm } from "@tanstack/react-form"
 import { useState } from "react"
+import { nanoid } from 'nanoid';
 
 interface ArtistFormProps {
   form: ReturnType<typeof useForm>
@@ -32,6 +33,7 @@ export const ArtistForm = ({
     form.setFieldValue('slug', newSlug);
     setIsSpinning(false);
   };
+
   return (
     <div className="flex flex-col gap-4 mb-4">
       <div className="flex gap-2">
@@ -63,7 +65,7 @@ export const ArtistForm = ({
           )}
         </form.Field>
       </div>
-      <form.Field name="cover_image">
+      <form.Field name="coverImage">
         {(field: any) => (
           <FileUploader
             fieldName={field.name}
@@ -73,7 +75,7 @@ export const ArtistForm = ({
           />
         )}
       </form.Field>
-      <form.Field name="profile_image">
+      <form.Field name="profileImage">
         {(field: any) => (
           <FileUploader
             fieldName={field.name}
@@ -102,7 +104,7 @@ export const ArtistForm = ({
               {
                 val.map((pair: any, index: number) => (
                   <div key={pair.id} className="flex space-x-2 my-2">
-                    <SocialMediaLink pair={pair} index={index} field={field} form={form} />
+                    <SocialMediaLink pair={pair} index={index} form={form} />
                   </div>
                 ))
               }
@@ -113,13 +115,16 @@ export const ArtistForm = ({
       <Button
         type="button"
         onClick={() => {
-          form.push('pairs', { id: nanoid(), dropdownValue: '', textValue: '' });
+          const pairsField = form.getFieldValue('pairs');
+
+          const updatedParis = Array.isArray(pairsField)
+            ? [...pairsField, { id: nanoid(), dropdownValue: "", textValue: "" }]
+            : [{ id: nanoid(), dropdownValue: "", textValue: "" }];
+          form.setFieldValue('pairs', updatedParis);
         }}
       >
         Add Pair
       </Button>
-      Add Pair
-    </Button>
     </div >
   )
 }

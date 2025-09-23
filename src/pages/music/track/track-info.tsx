@@ -1,20 +1,25 @@
-import type { GENRE } from "@/common/types/type"
 import { generateSlug } from "@/common/utils/slug.util"
 import { Combobox } from "@/components/custom/input/combobox"
 import { DescriptionField, InputField, SlugField } from "@/components/custom/input/input-field"
+import { useBaseHook } from "@/hooks/base.hook"
 import { fetchData } from "@/lib/axios"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
 export const TrackInfo = ({ form }: { form: any }) => {
   const [isSpinning, setIsSpinning] = useState<boolean>(false)
+  const {
+    data: artistData,
+    isPending: isPendingArtist,
+    error: artistError
+  } = useBaseHook('aritsts', '/users')
 
   const handleGenerateSlug = async () => {
     setIsSpinning(true);
 
-    const title = form.state.values.title;
+    const name = form.state.values.name;
 
-    const newSlug = generateSlug(title);
+    const newSlug = generateSlug(name);
 
     await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -27,8 +32,8 @@ export const TrackInfo = ({ form }: { form: any }) => {
     queryFn: async () => await fetchData('/genres')
   })
 
-  if (isPendingGenres) return <h1>Loading</h1>
-  if (genreError) return <h1>Failed to fetch...</h1>
+  if (isPendingGenres || isPendingArtist) return <h1>Loading</h1>
+  if (genreError || artistError) return <h1>Failed to fetch...</h1>
 
   const genres = genreData?.data?.data;
   const genreOptions = genres.map((genre: any) => {
@@ -37,11 +42,18 @@ export const TrackInfo = ({ form }: { form: any }) => {
       value: genre.id
     }
   })
-  console.log('genreOptions:', genreOptions)
+  const filteredUsers = artistData?.data.filter((artist: any) => artist?.role?.name == "Artist")
+
+  const artists = filteredUsers.map((user: any) => {
+    return {
+      label: user.name,
+      value: user.id
+    }
+  })
 
   return (
     <div className="flex flex-col gap-4">
-      <form.Field name="title">
+      <form.Field name="name">
         {
           (field: any) => (
             <InputField field={field} title="Title" placeholder="Enter track title" required />
@@ -73,18 +85,18 @@ export const TrackInfo = ({ form }: { form: any }) => {
         }
       </form.Field>
 
-      <form.Field name="genre">
+      <form.Field name="genres">
         {
           (field: any) => (
-            <Combobox field={field} options={genreOptions} title="Genre" required />
+            <Combobox field={field} options={genreOptions} title="Genre" required isMultiSelect />
           )
         }
       </form.Field>
 
-      <form.Field name="artist">
+      <form.Field name="artists">
         {
           (field: any) => (
-            <InputField field={field} title="artist" placeholder="Please add collaboration artists" />
+            <Combobox field={field} options={artists} title="Artists" required isMultiSelect />
           )
         }
       </form.Field>

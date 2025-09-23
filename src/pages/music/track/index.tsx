@@ -22,6 +22,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { nanoid } from "nanoid";
+import { create } from "domain";
 
 export const TrackPage = () => {
   const queryClient = useQueryClient();
@@ -36,7 +38,7 @@ export const TrackPage = () => {
   // Function to handle the actual deletion after confirmation
   const deleteTrack = async () => {
     try {
-      await fetcher(`/data-collect/${trackToDelete}`, {
+      await fetcher(`/track/${trackToDelete}`, {
         method: "DELETE",
         headers: {
           'Authorization': `Bearer ${await tokenService.getAccessToken()}`
@@ -70,19 +72,31 @@ export const TrackPage = () => {
 
     try {
       console.log(trackId)
-      const response = await fetchData(`/data-collect/${trackId}`);
-      const trackData = response.data;
+      const response = await fetchData(`/track/${trackId}`);
+      const trackData = response?.data;
+      console.log(trackData);
       // Populate the form with fetched data
-      form.setFieldValue('title', trackData.title);
+      form.setFieldValue('name', trackData.name);
       form.setFieldValue('description', trackData.description);
       form.setFieldValue('slug', trackData.slug);
       form.setFieldValue('duration', trackData.duration);
-      form.setFieldValue('genre', trackData.genre);
-      form.setFieldValue('artist', trackData.artist);
+      form.setFieldValue('genres', trackData.genres.map((genre: { id: string }) => genre.id));
       form.setFieldValue('spotify_url', trackData.spotify_url);
-      form.setFieldValue('apple_music_url', trackData.apple_music_url);
-      form.setFieldValue('soundcloud_url', trackData.soundcloud_url);
-      form.setFieldValue('youtube_url', trackData.youtube_url);
+      form.setFieldValue('artists', trackData.artists.map((artist: { id: string }) => artist.id));
+      form.setFieldValue('lyric_type', trackData.lyric_type)
+      form.setFieldValue('lyric_text', trackData.lyric_text);
+      form.setFieldValue('chord_text', trackData.chord_text);
+      form.setFieldValue('chord_type', trackData.chord_type);
+      if (trackData.music_links && trackData.music_links.length > 0) {
+        const formattedPairs = trackData.music_links.map((link: any) => ({
+          id: link.id || nanoid(),
+          dropdownValue: link.platform,
+          textValue: link.url,
+        }));
+        form.setFieldValue("pairs", formattedPairs);
+      } else {
+        form.setFieldValue("pairs", [{ id: nanoid(), dropdownValue: '', textValue: '' }]);
+      }
       toast.dismiss('fetch-track');
     } catch (error) {
       toast.dismiss('fetch-track');
@@ -93,34 +107,51 @@ export const TrackPage = () => {
 
   const form = useForm({
     defaultValues: {
-      title: '',
+      name: '',
       description: '',
       slug: '',
       duration: '',
-      genre: '',
-      artist: '',
+      genres: [],
+      artists: [],
       trackImage: null,
       trackCoverImage: null,
+      lyricImage: null,
+      chordImage: null,
       btsImages: [],
       storyboards: [],
-      spotify_url: '',
-      apple_music_url: '',
-      soundcloud_url: '',
-      youtube_url: '',
+      pairs: [{ id: nanoid(), dropdownValue: '', textValue: '' }]
     },
     onSubmit: async ({ value }) => {
       try {
         const {
           trackImage,
           trackCoverImage,
+          lyricImage,
+          chordImage,
           btsImages,
           storyboards,
+          pairs,
+          artists,
+          genres,
           ...restOfValue
         } = value;
         let trackImageId;
         let trackCoverImageId;
         let btsImagesIds;
         let storyBoardsIds;
+        let lyricImageId;
+        let chordImageId;
+        let socialMediaLinkIds;
+        let artistIds;
+        let genreIds;
+
+        if (artists && artists.length > 0) {
+          artistIds = artists.map((artist) => ({ id: artist }))
+        }
+
+        if (genres && genres.length > 0) {
+          genreIds = genres.map(genre => ({ id: genre }))
+        }
 
         const uploadFile = async (file: any) => {
           const response = await fetcher('/media/single', {
@@ -132,7 +163,7 @@ export const TrackPage = () => {
               media: file,
             }
           });
-          return response.data.id;
+          return response?.data.id;
         };
 
         const uploadMultipleFiles = async (files: any) => {
@@ -146,9 +177,10 @@ export const TrackPage = () => {
                 media: file
               },
             });
-            return response.data.id;
+            return response?.data.id;
           }))
-          return createdFiles.map((item: any) => ({ id: item.id }));
+          console.log('createdFiles', createdFiles);
+          return createdFiles.map((item: any) => ({ id: item }));
         };
 
         if (value.trackImage) {
@@ -167,21 +199,57 @@ export const TrackPage = () => {
           storyBoardsIds = await uploadMultipleFiles(value.storyboards);
         }
 
+        if (value.lyricImage) {
+          lyricImageId = await uploadFile(value.lyricImage);
+        }
+
+        if (value.chordImage) {
+          chordImageId = await uploadFile(value.chordImage);
+        }
+        console.log('btsImages', btsImagesIds)
+
+        if (value.pairs && value.pairs.length > 0) {
+          const socialMediaLinks = await Promise.all(value.pairs.map(async (pair: any) => {
+            const response = await fetcher('/music-link', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${await tokenService.getAccessToken()} `
+              },
+              data: {
+                platform: {
+                  id: pair.dropdownValue
+                },
+                url: pair.textValue
+              }
+            });
+            return response?.data.id;
+          }));
+
+          if (socialMediaLinks && socialMediaLinks.length > 0) {
+            socialMediaLinkIds = socialMediaLinks.map((id: any) => ({ id: id }))
+          }
+        }
+
         const finalPayload = {
           ...restOfValue,
           ...(trackImageId && { track_image: { id: trackImageId } }),
-          ...(trackCoverImageId && { track_cover_image: { id: trackCoverImageId } }),
-          ...(storyBoardsIds && storyBoardsIds.length > 0 && { track_story_boards: storyBoardsIds }),
-          ...(btsImagesIds && btsImagesIds.length > 0 && { track_bts_images: btsImagesIds }),
+          ...(trackCoverImageId && { cover_image: { id: trackCoverImageId } }),
+          ...(storyBoardsIds && storyBoardsIds.length > 0 && { story_boards: storyBoardsIds }),
+          ...(btsImagesIds && btsImagesIds.length > 0 && { bts_images: btsImagesIds }),
+          ...(lyricImageId && { lyric_image: lyricImageId }),
+          ...(chordImageId && { chord_image: chordImageId }),
+          ...(socialMediaLinkIds && socialMediaLinkIds.length > 0 && { music_links: socialMediaLinkIds }),
+          ...(artistIds && artistIds.length > 0 && { artists: artistIds }),
+          ...(genreIds && genreIds.length > 0 && { genres: genreIds })
         };
 
         const method = isEditing ? 'PATCH' : 'POST';
-        const url = isEditing ? `/data-collect/${editingTrackId}` : '/data-collect';
+        const url = isEditing ? `/track/${editingTrackId}` : '/track';
 
         await fetcher(url, {
           method: method,
           headers: {
-            'Authorization': `Bearer ${await tokenService.getAccessToken()}`
+            'Authorization': `Bearer ${await tokenService.getAccessToken()} `
           },
           data: finalPayload
         });
@@ -226,13 +294,13 @@ export const TrackPage = () => {
 
   const { isPending, error, data } = useQuery({
     queryKey: ['tracks'],
-    queryFn: () => fetchData('/data-collect')
+    queryFn: () => fetchData('/track')
   });
 
   if (isPending) return <h1>Loading...</h1>;
   if (error) return <h1>Failed to fetch...</h1>;
 
-  const tracks = data.data.data;
+  const tracks = data?.data.data;
 
   return (
     <div className="container mx-auto py-10 px-4">
@@ -269,8 +337,8 @@ export const TrackPage = () => {
         {tracks.length > 0 && tracks.map((track: any) => (
           <TrackCard
             key={track.id}
-            image={`${config.BASE_MEDIA_URL}${track.track_image?.url}`}
-            title={track.title}
+            image={`${config.BASE_MEDIA_URL}${track.track_image?.url} `}
+            title={track.name}
             duration={track.duration}
             onEdit={() => handleEdit(track.id)}
             onDelete={() => handleDelete(track.id)}

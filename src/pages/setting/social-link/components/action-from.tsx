@@ -30,9 +30,19 @@ export const SocialLinkForm = ({
           <InputField title="LinkedIn Url" field={field} required />
         )}
       </form.Field>
-      ```<form.Field name="youtube_url">
+      <form.Field name="youtube_url">
         {(field) => (
           <InputField title="Youtube Url" field={field} required />
+        )}
+      </form.Field>
+      <form.Field name="tiktok_url">
+        {(field) => (
+          <InputField title="Tiktok Url" field={field} required />
+        )}
+      </form.Field>
+      <form.Field name="contact_email">
+        {(field) => (
+          <InputField title="Contact Email" field={field} required />
         )}
       </form.Field>
     </div>

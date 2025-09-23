@@ -1,4 +1,5 @@
-import type { GENRE, SOCIAL_LINK } from "@/common/types/type";
+import type { PopularTrackSchemaSchemaType } from "@/common/schemas/popular-track.schema";
+import { type POPULAR_TRACK } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -11,10 +12,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import { SocialLinkForm } from "./components/action-from";
-import type { SocialLinkSchemaType } from "@/common/schemas/social-link.schema";
+import { GenreForm } from "../genres/components/action-form";
+import { PopularTrackForm } from "./components/action-form";
 
-export const SocialLinkPage = () => {
+export const PopularTrackPage = () => {
   const {
     data,
     isPending,
@@ -22,10 +23,10 @@ export const SocialLinkPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<SocialLinkSchemaType>('social-links', '/social-links')
+  } = useBaseHook<PopularTrackSchemaSchemaType>('popular-tracks', '/popular-tracks')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<SOCIAL_LINK | null>(null);
+  const [editedItem, setEditedItem] = useState<POPULAR_TRACK | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -41,21 +42,19 @@ export const SocialLinkPage = () => {
 
   const form = useForm({
     defaultValues: {
-      facebook_url: "",
-      youtube_url: "",
-      twitter_url: "",
-      instagram_url: "",
-      linkedin_url: "",
-      tiktok_url: "",
-      contact_email: "",
+      tracks: []
     },
     onSubmit: async ({ value }) => {
       try {
+        let trackIds;
+        if (value.tracks && value.tracks.length > 0) {
+          trackIds = value.tracks.map((track) => ({ id: track }))
+        }
         if (editedItem) {
-          await updateMutation.mutateAsync({ ...value, id: editedItem.id });
+          await updateMutation.mutateAsync({ ...{ tracks: trackIds }, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(value as SocialLinkSchemaType);
+          await createMutation.mutateAsync({ tracks: trackIds } as PopularTrackSchemaSchemaType);
         }
         setOpen(false);
         form.reset();
@@ -67,22 +66,25 @@ export const SocialLinkPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: SOCIAL_LINK) => {
-    setEditedItem(item);
-    form.setFieldValue('facebook_url', item.facebook_url)
-    form.setFieldValue('youtube_url', item.youtube_url)
-    form.setFieldValue('instagram_url', item.instagram_url)
-    form.setFieldValue('linkedin_url', item.linkedin_url)
-    form.setFieldValue('twitter_url', item.twitter_url)
-    form.setFieldValue('tiktok_url', item.tiktok_url)
-    form.setFieldValue('contact_email', item.contact_email)
-  }
 
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<SOCIAL_LINK>[] = [
+  const tracksInfo = data?.data[0] ? data?.data[0].tracks.map((t: any) => {
+    return {
+      id: data?.data[0].id,
+      name: t.name,
+      description: t.description
+    }
+  }) : []
+
+  const handleEdit = (item: POPULAR_TRACK) => {
+    setEditedItem(item);
+    form.setFieldValue("tracks", data?.data[0].tracks.map((track: any) => track.id));
+  }
+
+  const columns: ColumnDef<POPULAR_TRACK>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -106,45 +108,24 @@ export const SocialLinkPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "facebook_url",
-      header: "Facebook Url",
+      accessorKey: "name",
+      header: "Tracks",
       cell: ({ row }) => (
-        <div>{row.getValue("facebook_url")}</div>
+        <div>{row.getValue("name")}</div>
       ),
     },
     {
-      accessorKey: "youtube_url",
-      header: "Youtube Url",
+      accessorKey: "description",
+      header: "description",
       cell: ({ row }) => (
-        <div>{row.getValue("youtube_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "instagram_url",
-      header: "Instagram Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("instagram_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "linkedin_url",
-      header: "Linkedin Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("linkedin_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "twitter_url",
-      header: "Twitter Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("twitter_url") || '-'}</div>
+        <div>{row.getValue("description") || '-'}</div>
       )
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as SOCIAL_LINK;
+        const item = row.original as POPULAR_TRACK;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -174,19 +155,21 @@ export const SocialLinkPage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Social Link"
+        title="Popular Tracks"
         actionButton={
-          <Button variant='outline' type="button" onClick={() => {
-            setEditedItem(null);
-            form.reset();
-            setOpen(true);
-          }} disabled={data?.data.length > 0}>
-            <Plus /> Add New
-          </Button>
+          tracksInfo.length < 1 && (
+            <Button variant='outline' type="button" onClick={() => {
+              setEditedItem(null);
+              form.reset();
+              setOpen(true);
+            }}>
+              <Plus /> Add New
+            </Button>
+          )
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<SocialLinkForm form={form} />}
+        createForm={<PopularTrackForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -194,7 +177,7 @@ export const SocialLinkPage = () => {
         open={open}
         setOpen={setOpen}
         columns={columns}
-        data={data?.data || []}
+        data={tracksInfo || []}
       />
 
       <ConfirmDeleteDialog
@@ -204,9 +187,9 @@ export const SocialLinkPage = () => {
       />
 
       <ActionSheet
-        title="Edit Genre"
+        title="Edit Popular Tracks"
         description=""
-        updateForm={<SocialLinkForm form={form} />}
+        updateForm={<PopularTrackForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

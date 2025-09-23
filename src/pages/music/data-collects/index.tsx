@@ -205,12 +205,16 @@ export const DataCollectPage = () => {
   const renderContent = () => {
     switch (currentStep) {
       case 0:
+        console.log('form')
         return <TrackInfo form={form} />;
       case 1:
+        console.log('Image Form')
         return <TrackImageForm form={form} />;
       case 2:
+        console.log('Platform Link')
         return <PlatformLink form={form} />;
       case 3:
+        console.log('Review')
         return <ReviewForm formState={form.state} />;
       default:
         return null;

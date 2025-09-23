@@ -11,7 +11,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useFAQ } from "./hooks/use-faq.hook"
-import { useEditorStore } from "@/common/store/editorStore"
 import type { FAQSchemaType } from "@/common/schemas/faq.schmea"
 import { toast } from "sonner"
 
@@ -29,7 +28,6 @@ export const FAQPage = () => {
   const [editedFaq, setEditedFaq] = useState<FAQ | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedFaqId, setSelectedFaqId] = useState<string>("");
-  const { editorContentJSON, setEditorContentJSON } = useEditorStore();
 
   const handleDelete = (id: string) => {
     setIsDeleteDialogOpen(true);
@@ -48,23 +46,18 @@ export const FAQPage = () => {
     },
     onSubmit: async ({ value }) => {
       try {
-        const payload = {
-          question: value.question,
-          answer: editorContentJSON,
-        }
         if (editedFaq) {
           await updateMutation.mutateAsync({
             id: editedFaq.id as string,
-            updatedData: payload,
+            updatedData: value,
           })
           setEditedFaq(null);
         } else {
-          await createMutation.mutateAsync(payload as FAQSchemaType)
+          await createMutation.mutateAsync(value as FAQSchemaType)
         }
         setOpen(false);
         form.reset();
         setEditedFaq(null);
-        setEditorContentJSON("");
       } catch (error) {
         console.error("Form submission failed: ", error);
         toast.error("An error occurred during the submission.");
@@ -75,7 +68,7 @@ export const FAQPage = () => {
   const handleEdit = (faq: FAQ) => {
     setEditedFaq(faq);
     form.setFieldValue("question", faq.question);
-    setEditorContentJSON(faq.answer);
+    form.setFieldValue("answer", faq.answer);
   }
 
   if (isPending) return <h1>Loading...</h1>

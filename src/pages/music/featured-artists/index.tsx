@@ -1,4 +1,5 @@
-import type { GENRE, SOCIAL_LINK } from "@/common/types/type";
+import type { FeaturedArtistSchemaSchemaType } from "@/common/schemas/featured-artist.schema";
+import type { FEATURED_ARTIST } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -11,10 +12,9 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import { SocialLinkForm } from "./components/action-from";
-import type { SocialLinkSchemaType } from "@/common/schemas/social-link.schema";
+import { FeaturedArtistForm } from "./components/action-form";
 
-export const SocialLinkPage = () => {
+export const FeaturedArtistPage = () => {
   const {
     data,
     isPending,
@@ -22,10 +22,10 @@ export const SocialLinkPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<SocialLinkSchemaType>('social-links', '/social-links')
+  } = useBaseHook<FeaturedArtistSchemaSchemaType>('featured-artists', '/featured-artists')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<SOCIAL_LINK | null>(null);
+  const [editedItem, setEditedItem] = useState<FEATURED_ARTIST | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -41,21 +41,19 @@ export const SocialLinkPage = () => {
 
   const form = useForm({
     defaultValues: {
-      facebook_url: "",
-      youtube_url: "",
-      twitter_url: "",
-      instagram_url: "",
-      linkedin_url: "",
-      tiktok_url: "",
-      contact_email: "",
+      artists: []
     },
     onSubmit: async ({ value }) => {
       try {
+        let artistIds;
+        if (value.artists && value.artists.length > 0) {
+          artistIds = value.artists.map((artist) => ({ id: artist }))
+        }
         if (editedItem) {
-          await updateMutation.mutateAsync({ ...value, id: editedItem.id });
+          await updateMutation.mutateAsync({ ...{ artists: artistIds }, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(value as SocialLinkSchemaType);
+          await createMutation.mutateAsync({ artists: artistIds } as FeaturedArtistSchemaSchemaType);
         }
         setOpen(false);
         form.reset();
@@ -67,22 +65,25 @@ export const SocialLinkPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: SOCIAL_LINK) => {
-    setEditedItem(item);
-    form.setFieldValue('facebook_url', item.facebook_url)
-    form.setFieldValue('youtube_url', item.youtube_url)
-    form.setFieldValue('instagram_url', item.instagram_url)
-    form.setFieldValue('linkedin_url', item.linkedin_url)
-    form.setFieldValue('twitter_url', item.twitter_url)
-    form.setFieldValue('tiktok_url', item.tiktok_url)
-    form.setFieldValue('contact_email', item.contact_email)
-  }
 
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<SOCIAL_LINK>[] = [
+  const artistsInfo = data?.data[0] ? data?.data[0].artists.map((t: any) => {
+    return {
+      id: data?.data[0].id,
+      name: t.name,
+      description: t.description
+    }
+  }) : []
+
+  const handleEdit = (item: FEATURED_ARTIST) => {
+    setEditedItem(item);
+    form.setFieldValue("artists", data?.data[0].artists.map((artist: any) => artist.id));
+  }
+
+  const columns: ColumnDef<FEATURED_ARTIST>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -106,45 +107,24 @@ export const SocialLinkPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "facebook_url",
-      header: "Facebook Url",
+      accessorKey: "name",
+      header: "Tracks",
       cell: ({ row }) => (
-        <div>{row.getValue("facebook_url")}</div>
+        <div>{row.getValue("name")}</div>
       ),
     },
     {
-      accessorKey: "youtube_url",
-      header: "Youtube Url",
+      accessorKey: "description",
+      header: "description",
       cell: ({ row }) => (
-        <div>{row.getValue("youtube_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "instagram_url",
-      header: "Instagram Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("instagram_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "linkedin_url",
-      header: "Linkedin Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("linkedin_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "twitter_url",
-      header: "Twitter Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("twitter_url") || '-'}</div>
+        <div>{row.getValue("description") || '-'}</div>
       )
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as SOCIAL_LINK;
+        const item = row.original as FEATURED_ARTIST;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -174,19 +154,21 @@ export const SocialLinkPage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Social Link"
+        title="Popular Tracks"
         actionButton={
-          <Button variant='outline' type="button" onClick={() => {
-            setEditedItem(null);
-            form.reset();
-            setOpen(true);
-          }} disabled={data?.data.length > 0}>
-            <Plus /> Add New
-          </Button>
+          artistsInfo.length < 1 && (
+            <Button variant='outline' type="button" onClick={() => {
+              setEditedItem(null);
+              form.reset();
+              setOpen(true);
+            }}>
+              <Plus /> Add New
+            </Button>
+          )
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<SocialLinkForm form={form} />}
+        createForm={<FeaturedArtistForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -194,7 +176,7 @@ export const SocialLinkPage = () => {
         open={open}
         setOpen={setOpen}
         columns={columns}
-        data={data?.data || []}
+        data={artistsInfo || []}
       />
 
       <ConfirmDeleteDialog
@@ -204,9 +186,9 @@ export const SocialLinkPage = () => {
       />
 
       <ActionSheet
-        title="Edit Genre"
+        title="Edit Popular Tracks"
         description=""
-        updateForm={<SocialLinkForm form={form} />}
+        updateForm={<FeaturedArtistForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

@@ -13,16 +13,19 @@ import { useState } from "react"
 import { toast } from "sonner";
 import { ArtistForm } from "./components/action-form";
 import type { ArtistSchemaType } from "@/common/schemas/artist.schema";
+import { nanoid } from "nanoid";
 
 export const ArtistPage = () => {
+
   const {
     data,
     isPending,
     error,
-    createMutation,
-    updateMutation,
-    deleteMutation
-  } = useBaseHook<ArtistSchemaType>('artists', '/user-profile')
+    deleteMutation,
+    uploadMutation,
+    updateMutation: updateArtistMutation,
+    createMutation: createArtistMutation
+  } = useBaseHook('art', '/artist');
 
   const [open, setOpen] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<USER_PROFILE | null>(null);
@@ -42,20 +45,46 @@ export const ArtistPage = () => {
   type FormValues = {
     name: string;
     pairs: { id: string; dropdownValue: string; textValue: string }[];
+    coverImage: any;
+    profileImage: any;
   };
 
   const form = useForm({
     defaultValues: {
       name: "",
-      pairs: [{ id: '', dropdownValue: '', textValue: '' }]
+      slug: "",
+      bio: "",
+      pairs: [{ id: nanoid(), dropdownValue: '', textValue: '' }],
+      coverImage: null,
+      profileImage: null,
     } as FormValues,
     onSubmit: async ({ value }) => {
       try {
+        const {
+          coverImage,
+          profileImage,
+          ...restValues
+        } = value;
+        let coverImageId;
+        let profileImageId;
+
+        if (coverImage) {
+          coverImageId = await uploadMutation.mutateAsync(coverImage);
+        }
+        if (profileImage) {
+          profileImageId = await uploadMutation.mutateAsync(profileImage);
+        }
+        const finalPayload = {
+          cover_image: coverImageId ? coverImageId : null,
+          profile_image: profileImageId ? profileImageId : null,
+          ...restValues
+        }
         if (editedItem) {
-          await updateMutation.mutateAsync({ ...value, id: editedItem.id });
+          await updateArtistMutation.mutateAsync({ ...finalPayload, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(value as ArtistSchemaType);
+          await createArtistMutation.mutateAsync(finalPayload)
+
         }
         setOpen(false);
         form.reset();
@@ -69,9 +98,24 @@ export const ArtistPage = () => {
 
   const handleEdit = (item: USER_PROFILE) => {
     setEditedItem(item);
+    const { social_media_links } = item;
+    console.log(social_media_links)
+    if (social_media_links && social_media_links.length > 0) {
+      const formattedPairs = social_media_links.map((link: any) => ({
+        id: link.id || nanoid(),
+        dropdownValue: link.platform.id,
+        textValue: link.url,
+      }));
+      form.setFieldValue("pairs", formattedPairs);
+    } else {
+      form.setFieldValue("pairs", [{ id: nanoid(), dropdownValue: '', textValue: '' }]);
+    }
     form.setFieldValue("name", item.name);
+    form.setFieldValue("slug", item.slug);
+    form.setFieldValue("bio", item.bio);
+    form.setFieldValue("location", item.location);
+    form.setFieldValue("email", item.email);
   }
-
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
@@ -101,16 +145,23 @@ export const ArtistPage = () => {
     },
     {
       accessorKey: "name",
-      header: "name",
+      header: "Name",
       cell: ({ row }) => (
         <div>{row.getValue("name")}</div>
       ),
     },
     {
-      accessorKey: "description",
-      header: "description",
+      accessorKey: "slug",
+      header: "Slug",
       cell: ({ row }) => (
-        <div>{row.getValue("description") || '-'}</div>
+        <div>{row.getValue("slug")}</div>
+      ),
+    },
+    {
+      accessorKey: "location",
+      header: "Location",
+      cell: ({ row }) => (
+        <div>{row.getValue("location") || '-'}</div>
       )
     },
     {
@@ -157,7 +208,7 @@ export const ArtistPage = () => {
             <Plus /> Add New
           </Button>
         }
-        dialogTitle="Create"
+        dialogTitle="Create new artist"
         dialogDescription=""
         createForm={<ArtistForm form={form} />}
         onFormSubmit={(e) => {
@@ -167,7 +218,7 @@ export const ArtistPage = () => {
         open={open}
         setOpen={setOpen}
         columns={columns}
-        data={data?.data || []}
+        data={data || []}
       />
 
       <ConfirmDeleteDialog
@@ -177,7 +228,7 @@ export const ArtistPage = () => {
       />
 
       <ActionSheet
-        title="Edit Genre"
+        title="Edit Artist"
         description=""
         updateForm={<ArtistForm form={form} />}
         onFormSubmit={(e) => {

@@ -7,6 +7,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryProviders } from './common/providers/query-provider';
 import { useAuth } from '@/hooks/use-auth.hook';
 import { Toaster } from 'sonner';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const router = createRouter({
   routeTree,
@@ -26,6 +27,7 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <RouterProvider router={router} context={{ auth: isAuthenticated }} />
           <Toaster position="top-right" />
+          <ReactQueryDevtools initialIsOpen={false} />
         </ThemeProvider>
       </QueryProviders>
     </React.StrictMode>

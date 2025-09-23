@@ -47,13 +47,12 @@ const deleteItem = async (url: string) => {
 export const useBaseHook = <T>(name: string, url: string) => {
   const queryClient = useQueryClient();
   const uploadMutation = useUploadSingleFile();
-  // The query key is now typed based on the generic 'T'.
+
   const { data, isPending, error } = useQuery({
     queryKey: [name],
     queryFn: () => fetchData(url),
   });
 
-  // The createMutation now accepts a payload of type 'T'.
   const createMutation = useMutation<any, Error, T>({
     mutationFn: (payload) => createItem(url, payload),
     onSuccess: () => {

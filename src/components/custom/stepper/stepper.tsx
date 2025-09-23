@@ -62,7 +62,7 @@ export function Stepper({ steps, currentStep, onStepChange, content }: StepperPr
           Previous
         </Button>
         {
-          currentStep === steps.length - 1 ?
+          currentStep == steps.length - 1 ?
             <Button type="submit">Submit</Button>
             :
             <Button onClick={nextStep} type="button">Next</Button>

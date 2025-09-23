@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { FieldApi, FormApi } from "@tanstack/react-form";
+import { useBaseHook } from "@/hooks/base.hook";
 
-// Define a type for the dynamic pair
 type SocialMediaPair = {
   id: string;
   dropdownValue: string;
@@ -11,22 +10,33 @@ type SocialMediaPair = {
 };
 
 interface FieldComponentProps {
-  // FieldApi provides the correct type for the field prop
-  field: any;
   form: any;
   pair: SocialMediaPair;
   index: number;
 }
 
 export const SocialMediaLink = ({
-  field,
   form,
   pair,
   index,
 }: FieldComponentProps) => {
+  const {
+    data,
+    isPending,
+    error
+  } = useBaseHook('platforms', '/platforms');
+
+  if (isPending) return <h1>Loading...</h1>
+  if (error) return < h1 > Failed to fetch...</h1 >
+
+  const selectedValues = form.getFieldValue('pairs').map((p: any) => p.dropdownValue);
+
+  const availablePlatforms = data?.data?.filter((platform: any) =>
+    !selectedValues.includes(platform.id) || platform.id === pair.dropdownValue // Keep the currently selected value
+  );
+
   return (
     <div key={pair.id} className="flex space-x-2 my-2">
-      {/* Social Media Platform Dropdown */}
       <form.Field
         name={`pairs[${index}].dropdownValue`}
         children={(field: any) => (
@@ -35,15 +45,16 @@ export const SocialMediaLink = ({
               <SelectValue placeholder="Select platform" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="facebook">Facebook</SelectItem>
-              <SelectItem value="twitter">Twitter</SelectItem>
-              <SelectItem value="linkedin">LinkedIn</SelectItem>
+              {
+                availablePlatforms.map((platform: any) => (
+                  <SelectItem key={platform.id} value={platform.id}>{platform.name}</SelectItem>
+                ))
+              }
             </SelectContent>
           </Select>
         )}
       />
 
-      {/* Social Media Link Text Field */}
       <form.Field
         name={`pairs[${index}].textValue`}
         children={(field: any) => (
@@ -56,10 +67,14 @@ export const SocialMediaLink = ({
         )}
       />
 
-      {/* Remove Button */}
       <Button
         type="button"
-        onClick={() => field.remove(index)}
+        onClick={() => {
+          const pairsField = form.getFieldValue('pairs');
+
+          const updatedArray = pairsField.filter((_: any, i: number) => i !== index);
+          form.setFieldValue('pairs', updatedArray);
+        }}
       >
         Remove
       </Button>

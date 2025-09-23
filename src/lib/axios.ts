@@ -1,5 +1,6 @@
 import { config } from '@/common/config/config';
 import { tokenService } from '@/common/services/token.service';
+import { useAuthStore } from '@/common/store/authStore';
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
 export const api = axios.create({
@@ -10,7 +11,7 @@ export const api = axios.create({
   },
 })
 
-export const fetcher = async (url: string, options?: AxiosRequestConfig): Promise<AxiosResponse> => {
+export const fetcher = async (url: string, options?: AxiosRequestConfig) => {
   try {
     const response = await api({
       url,           // URL for the request
@@ -20,14 +21,19 @@ export const fetcher = async (url: string, options?: AxiosRequestConfig): Promis
       params: options?.params,           // Pass query parameters for GET requests
     });
     return response; // Return Axios response object
-  } catch (error) {
+  } catch (error: any) {
     // Handle error, or rethrow if needed
-    console.error('API request failed:', error);
-    throw error;  // Rethrow the error for further handling
+    if (error.status == 401) {
+      console.log(error)
+      useAuthStore.getState().logout()
+    } else {
+      console.error('API request failed:', error);
+      throw error;  // Rethrow the error for further handling
+    }
   }
 };
 
-export const fetchData = async (url: string): Promise<AxiosResponse> => {
+export const fetchData = async (url: string) => {
   try {
     const response = await fetcher(url, {
       method: 'GET',

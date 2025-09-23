@@ -1,4 +1,3 @@
-import type { GENRE, SOCIAL_LINK } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -8,13 +7,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useBaseHook } from "@/hooks/base.hook"
 import { useForm } from "@tanstack/react-form";
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
+import { MoreHorizontal, Edit2, Trash, Plus, Copy } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import { SocialLinkForm } from "./components/action-from";
-import type { SocialLinkSchemaType } from "@/common/schemas/social-link.schema";
+import { ApiTokenForm } from "./components/action-form";
+import type { ApiTokenSchemaType } from "@/common/schemas/api-token.schema";
+import type { API_TOKEN } from "@/common/types/type";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { StatusTextWithCircle } from "@/components/custom/typography/typography";
 
-export const SocialLinkPage = () => {
+export const ApiTokenPage = () => {
   const {
     data,
     isPending,
@@ -22,10 +24,10 @@ export const SocialLinkPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<SocialLinkSchemaType>('social-links', '/social-links')
+  } = useBaseHook<ApiTokenSchemaType>('api-tokens', '/api-token')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<SOCIAL_LINK | null>(null);
+  const [editedItem, setEditedItem] = useState<API_TOKEN | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -41,13 +43,8 @@ export const SocialLinkPage = () => {
 
   const form = useForm({
     defaultValues: {
-      facebook_url: "",
-      youtube_url: "",
-      twitter_url: "",
-      instagram_url: "",
-      linkedin_url: "",
-      tiktok_url: "",
-      contact_email: "",
+      client_name: "",
+      is_active: true
     },
     onSubmit: async ({ value }) => {
       try {
@@ -55,7 +52,7 @@ export const SocialLinkPage = () => {
           await updateMutation.mutateAsync({ ...value, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(value as SocialLinkSchemaType);
+          await createMutation.mutateAsync(value as ApiTokenSchemaType);
         }
         setOpen(false);
         form.reset();
@@ -67,22 +64,18 @@ export const SocialLinkPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: SOCIAL_LINK) => {
+  const handleEdit = (item: API_TOKEN) => {
     setEditedItem(item);
-    form.setFieldValue('facebook_url', item.facebook_url)
-    form.setFieldValue('youtube_url', item.youtube_url)
-    form.setFieldValue('instagram_url', item.instagram_url)
-    form.setFieldValue('linkedin_url', item.linkedin_url)
-    form.setFieldValue('twitter_url', item.twitter_url)
-    form.setFieldValue('tiktok_url', item.tiktok_url)
-    form.setFieldValue('contact_email', item.contact_email)
+    form.setFieldValue("key", item.key);
+    form.setFieldValue("client_name", item.client_name);
+    form.setFieldValue("is_active", item.is_active)
   }
 
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<SOCIAL_LINK>[] = [
+  const columns: ColumnDef<API_TOKEN>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -106,45 +99,71 @@ export const SocialLinkPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "facebook_url",
-      header: "Facebook Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("facebook_url")}</div>
-      ),
+      accessorKey: "key",
+      header: "Key",
+      cell: ({ row }) => {
+        const [copied, setCopied] = useState(false);
+        const key = row.getValue("key") as string;
+        const maskedKey = "*".repeat(key.length);
+
+        const handleCopy = () => {
+          navigator.clipboard.writeText(key)
+            .then(() => {
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            })
+            .catch(err => {
+              console.error("Failed to copy API key: ", err);
+            });
+        };
+
+        return (
+          <div className="flex items-center space-x-2">
+            <span>{maskedKey}</span>
+            <TooltipProvider>
+              <Tooltip open={copied}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleCopy}
+                    aria-label="Copy API Key"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-primary text-primary-foreground">
+                  Copied!
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "youtube_url",
-      header: "Youtube Url",
+      accessorKey: "client_name",
+      header: "Client Name",
       cell: ({ row }) => (
-        <div>{row.getValue("youtube_url") || '-'}</div>
+        <div>{row.getValue("client_name")}</div>
       )
     },
     {
-      accessorKey: "instagram_url",
-      header: "Instagram Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("instagram_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "linkedin_url",
-      header: "Linkedin Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("linkedin_url") || '-'}</div>
-      )
-    },
-    {
-      accessorKey: "twitter_url",
-      header: "Twitter Url",
-      cell: ({ row }) => (
-        <div>{row.getValue("twitter_url") || '-'}</div>
-      )
+      accessorKey: "is_active",
+      header: "Show in Slide",
+      cell: ({ row }) => {
+        const status = row.getValue('is_active') ? 'success' : 'failed'
+        const text = row.getValue('is_active') ? 'Active' : 'In Active'
+        return (
+          <StatusTextWithCircle status={status} text={text} />
+        )
+      },
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as SOCIAL_LINK;
+        const item = row.original as API_TOKEN;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -174,19 +193,19 @@ export const SocialLinkPage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Social Link"
+        title="Api Tokens"
         actionButton={
           <Button variant='outline' type="button" onClick={() => {
             setEditedItem(null);
             form.reset();
             setOpen(true);
-          }} disabled={data?.data.length > 0}>
+          }}>
             <Plus /> Add New
           </Button>
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<SocialLinkForm form={form} />}
+        createForm={<ApiTokenForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -206,7 +225,7 @@ export const SocialLinkPage = () => {
       <ActionSheet
         title="Edit Genre"
         description=""
-        updateForm={<SocialLinkForm form={form} />}
+        updateForm={<ApiTokenForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

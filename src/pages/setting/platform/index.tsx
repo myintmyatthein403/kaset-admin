@@ -48,7 +48,7 @@ export const PlatfromPage = () => {
     },
     onSubmit: async ({ value }) => {
       try {
-        let iconId = editedItem?.icon.id || "";
+        let iconId = editedItem?.icon?.id || "";
 
         if (value.icon) {
           const uploadImage = await uploadMutation.mutateAsync(value.icon);

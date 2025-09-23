@@ -1,58 +1,225 @@
-import { Button } from "@/components/ui/button"
-import { AlbumCard } from "./components/album-card"
-import { Plus } from "lucide-react"
+import { type ALBUM, type GENRE } from "@/common/types/type";
+import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
+import { ActionSheet } from "@/components/custom/sheet/sheet";
+import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useBaseHook } from "@/hooks/base.hook"
+import { useForm } from "@tanstack/react-form";
+import type { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
-import { AlbumForm } from "./album-from"
-import { useForm } from "@tanstack/react-form"
-
-const albumLists = [
-  {
-    id: "1",
-    src: "https://plus.unsplash.com/premium_photo-1682125340805-c01b8a9a7aee?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Album Cover",
-    title: "Album Title",
-  },
-  {
-    id: "2",
-    src: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60",
-    alt: "Album Cover",
-    title: "Album Title 2",
-  }
-]
+import { toast } from "sonner";
+import type { genreSchemaType } from "@/common/schemas/genre.schema";
+import { AlbumForm } from "./components/action-form";
 
 export const AlbumPage = () => {
+  const {
+    data,
+    isPending,
+    error,
+    createMutation,
+    uploadMutation,
+    updateMutation,
+    deleteMutation,
+  } = useBaseHook<genreSchemaType>('albums', '/album')
+
   const [open, setOpen] = useState<boolean>(false);
+  const [editedItem, setEditedItem] = useState<ALBUM | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+  const [selectedItemId, setSelectedItemId] = useState<string>("");
+
+  const handleDelete = (id: string) => {
+    setIsDeleteDialogOpen(true);
+    setSelectedItemId(id);
+  }
+
+  const handleConfirmDelete = () => {
+    deleteMutation.mutate(selectedItemId);
+    setIsDeleteDialogOpen(false);
+  }
 
   const form = useForm({
     defaultValues: {
-      title: '',
-      artist: '',
-      year: '',
-      cover: '',
+      name: "",
+      description: "",
+      slug: "",
+      artists: [],
+      tracks: [],
+      coverImage: null,
     },
-    onSubmit: (values) => {
-      console.log(values)
+    onSubmit: async ({ value }) => {
+      try {
+        const {
+          artists,
+          tracks,
+          coverImage,
+          ...restValue
+        } = value;
+        let imageId = editedItem?.cover?.id || "";
+
+        if (value?.coverImage) {
+          const uploadImage = await uploadMutation.mutateAsync(value.coverImage);
+          imageId = uploadImage.id;
+        }
+        let artistIds;
+        let trackIds;
+
+        if (artists && artists.length > 0) {
+          artistIds = artists.map((artist) => ({ id: artist }))
+        }
+        if (tracks && tracks.length > 0) {
+          trackIds = tracks.map((track) => ({ id: track }))
+        }
+
+        const finalPayload = {
+          ...restValue,
+          artists: artistIds,
+          tracks: trackIds,
+          cover: imageId ? imageId : null,
+        }
+
+        if (editedItem) {
+          await updateMutation.mutateAsync({ ...finalPayload, id: editedItem.id });
+          setEditedItem(null);
+        } else {
+          await createMutation.mutateAsync(finalPayload as genreSchemaType);
+        }
+        setOpen(false);
+        form.reset();
+        setEditedItem(null);
+      } catch (error) {
+        console.error("Form submission failed: ", error);
+        toast.error("An error occurred during the submission.");
+      }
     }
-  })
+  }) as any;
+
+  const handleEdit = (item: ALBUM) => {
+    setEditedItem(item);
+    form.setFieldValue("name", item.name);
+    form.setFieldValue("description", item.description);
+    form.setFieldValue("slug", item.slug);
+    form.setFieldValue("tracks", item.tracks.map(track => track.id))
+    form.setFieldValue("artists", item.artists.map(artist => artist.id))
+  }
+
+
+  if (isPending) return <h1>Loading...</h1>
+  if (error) return <h1>Failed to Fetch...</h1>
+
+  const columns: ColumnDef<GENRE>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: "name",
+      cell: ({ row }) => (
+        <div>{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "description",
+      header: "description",
+      cell: ({ row }) => (
+        <div>{row.getValue("description") || '-'}</div>
+      )
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const item = row.original as ALBUM;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0" type="button">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  handleEdit(item);
+                }}>
+                <Edit2 /> Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleDelete(item.id as string)}
+              > <Trash className="text-red-500" /> Delete </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
 
   return (
-    <div className="container mx-auto py-10 px-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Album List</h1>
-        <Button onClick={() => setOpen(true)}>
-          <Plus />
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 text-black sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {
-          albumLists.map((album) => (
-            <AlbumCard key={album.id} src={album.src} alt={album.alt} title={album.title} onEdit={() => console.log('edit')} onDelete={() => console.log('delete')} />
-          ))
+    <>
+      <BaseContentLayout
+        title="Albums"
+        actionButton={
+          <Button variant='outline' type="button" onClick={() => {
+            setEditedItem(null);
+            form.reset();
+            setOpen(true);
+          }}>
+            <Plus /> Add New
+          </Button>
         }
-      </div>
+        dialogTitle="Create New Album"
+        dialogDescription=""
+        createForm={<AlbumForm form={form} />}
+        onFormSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+        open={open}
+        setOpen={setOpen}
+        columns={columns}
+        data={data?.data || []}
+      />
 
-      <AlbumForm open={open} onOpenChange={setOpen} form={form} />
-    </div>
+      <ConfirmDeleteDialog
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+        confirmDelete={handleConfirmDelete}
+      />
+
+      <ActionSheet
+        title="Edit Genre"
+        description=""
+        updateForm={<AlbumForm form={form} />}
+        onFormSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+        open={!!editedItem}
+        setOpen={() => setEditedItem(null)}
+      />
+    </>
   )
 }

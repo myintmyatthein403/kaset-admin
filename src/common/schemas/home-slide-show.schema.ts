@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const homeSlideShowSchema = z.object({
+  id: z.uuid().optional(),
   title: z.string(),
   sub_title: z.string().optional(),
   button_text: z.string().optional(),

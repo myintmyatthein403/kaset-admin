@@ -22,11 +22,14 @@ import { Route as AuthSettingPlatformsRouteImport } from './routes/_auth/setting
 import { Route as AuthSettingLogoRouteImport } from './routes/_auth/setting/logo'
 import { Route as AuthSettingHomePageSlideShowRouteImport } from './routes/_auth/setting/home-page-slide-show'
 import { Route as AuthSettingFaqRouteImport } from './routes/_auth/setting/faq'
+import { Route as AuthSettingApiTokenRouteImport } from './routes/_auth/setting/api-token'
 import { Route as AuthProductProductsRouteImport } from './routes/_auth/product/products'
 import { Route as AuthProductProductCategoriesRouteImport } from './routes/_auth/product/product-categories'
 import { Route as AuthProductOrdersRouteImport } from './routes/_auth/product/orders'
 import { Route as AuthMusicTracksRouteImport } from './routes/_auth/music/tracks'
+import { Route as AuthMusicPopularTracksRouteImport } from './routes/_auth/music/popular-tracks'
 import { Route as AuthMusicGenresRouteImport } from './routes/_auth/music/genres'
+import { Route as AuthMusicFeaturedArtistsRouteImport } from './routes/_auth/music/featured-artists'
 import { Route as AuthMusicDataCollectRouteImport } from './routes/_auth/music/data-collect'
 import { Route as AuthMusicAlbumsRouteImport } from './routes/_auth/music/albums'
 
@@ -96,6 +99,11 @@ const AuthSettingFaqRoute = AuthSettingFaqRouteImport.update({
   path: '/setting/faq',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthSettingApiTokenRoute = AuthSettingApiTokenRouteImport.update({
+  id: '/setting/api-token',
+  path: '/setting/api-token',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthProductProductsRoute = AuthProductProductsRouteImport.update({
   id: '/product/products',
   path: '/product/products',
@@ -117,11 +125,22 @@ const AuthMusicTracksRoute = AuthMusicTracksRouteImport.update({
   path: '/music/tracks',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthMusicPopularTracksRoute = AuthMusicPopularTracksRouteImport.update({
+  id: '/music/popular-tracks',
+  path: '/music/popular-tracks',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthMusicGenresRoute = AuthMusicGenresRouteImport.update({
   id: '/music/genres',
   path: '/music/genres',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthMusicFeaturedArtistsRoute =
+  AuthMusicFeaturedArtistsRouteImport.update({
+    id: '/music/featured-artists',
+    path: '/music/featured-artists',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const AuthMusicDataCollectRoute = AuthMusicDataCollectRouteImport.update({
   id: '/music/data-collect',
   path: '/music/data-collect',
@@ -140,11 +159,14 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
   '/music/albums': typeof AuthMusicAlbumsRoute
   '/music/data-collect': typeof AuthMusicDataCollectRoute
+  '/music/featured-artists': typeof AuthMusicFeaturedArtistsRoute
   '/music/genres': typeof AuthMusicGenresRoute
+  '/music/popular-tracks': typeof AuthMusicPopularTracksRoute
   '/music/tracks': typeof AuthMusicTracksRoute
   '/product/orders': typeof AuthProductOrdersRoute
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/product/products': typeof AuthProductProductsRoute
+  '/setting/api-token': typeof AuthSettingApiTokenRoute
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/setting/logo': typeof AuthSettingLogoRoute
@@ -161,11 +183,14 @@ export interface FileRoutesByTo {
   '/': typeof AuthIndexRoute
   '/music/albums': typeof AuthMusicAlbumsRoute
   '/music/data-collect': typeof AuthMusicDataCollectRoute
+  '/music/featured-artists': typeof AuthMusicFeaturedArtistsRoute
   '/music/genres': typeof AuthMusicGenresRoute
+  '/music/popular-tracks': typeof AuthMusicPopularTracksRoute
   '/music/tracks': typeof AuthMusicTracksRoute
   '/product/orders': typeof AuthProductOrdersRoute
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/product/products': typeof AuthProductProductsRoute
+  '/setting/api-token': typeof AuthSettingApiTokenRoute
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/setting/logo': typeof AuthSettingLogoRoute
@@ -184,11 +209,14 @@ export interface FileRoutesById {
   '/_auth/': typeof AuthIndexRoute
   '/_auth/music/albums': typeof AuthMusicAlbumsRoute
   '/_auth/music/data-collect': typeof AuthMusicDataCollectRoute
+  '/_auth/music/featured-artists': typeof AuthMusicFeaturedArtistsRoute
   '/_auth/music/genres': typeof AuthMusicGenresRoute
+  '/_auth/music/popular-tracks': typeof AuthMusicPopularTracksRoute
   '/_auth/music/tracks': typeof AuthMusicTracksRoute
   '/_auth/product/orders': typeof AuthProductOrdersRoute
   '/_auth/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/_auth/product/products': typeof AuthProductProductsRoute
+  '/_auth/setting/api-token': typeof AuthSettingApiTokenRoute
   '/_auth/setting/faq': typeof AuthSettingFaqRoute
   '/_auth/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
   '/_auth/setting/logo': typeof AuthSettingLogoRoute
@@ -207,11 +235,14 @@ export interface FileRouteTypes {
     | '/'
     | '/music/albums'
     | '/music/data-collect'
+    | '/music/featured-artists'
     | '/music/genres'
+    | '/music/popular-tracks'
     | '/music/tracks'
     | '/product/orders'
     | '/product/product-categories'
     | '/product/products'
+    | '/setting/api-token'
     | '/setting/faq'
     | '/setting/home-page-slide-show'
     | '/setting/logo'
@@ -228,11 +259,14 @@ export interface FileRouteTypes {
     | '/'
     | '/music/albums'
     | '/music/data-collect'
+    | '/music/featured-artists'
     | '/music/genres'
+    | '/music/popular-tracks'
     | '/music/tracks'
     | '/product/orders'
     | '/product/product-categories'
     | '/product/products'
+    | '/setting/api-token'
     | '/setting/faq'
     | '/setting/home-page-slide-show'
     | '/setting/logo'
@@ -250,11 +284,14 @@ export interface FileRouteTypes {
     | '/_auth/'
     | '/_auth/music/albums'
     | '/_auth/music/data-collect'
+    | '/_auth/music/featured-artists'
     | '/_auth/music/genres'
+    | '/_auth/music/popular-tracks'
     | '/_auth/music/tracks'
     | '/_auth/product/orders'
     | '/_auth/product/product-categories'
     | '/_auth/product/products'
+    | '/_auth/setting/api-token'
     | '/_auth/setting/faq'
     | '/_auth/setting/home-page-slide-show'
     | '/_auth/setting/logo'
@@ -364,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSettingFaqRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/setting/api-token': {
+      id: '/_auth/setting/api-token'
+      path: '/setting/api-token'
+      fullPath: '/setting/api-token'
+      preLoaderRoute: typeof AuthSettingApiTokenRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/product/products': {
       id: '/_auth/product/products'
       path: '/product/products'
@@ -392,11 +436,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthMusicTracksRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/music/popular-tracks': {
+      id: '/_auth/music/popular-tracks'
+      path: '/music/popular-tracks'
+      fullPath: '/music/popular-tracks'
+      preLoaderRoute: typeof AuthMusicPopularTracksRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/music/genres': {
       id: '/_auth/music/genres'
       path: '/music/genres'
       fullPath: '/music/genres'
       preLoaderRoute: typeof AuthMusicGenresRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/music/featured-artists': {
+      id: '/_auth/music/featured-artists'
+      path: '/music/featured-artists'
+      fullPath: '/music/featured-artists'
+      preLoaderRoute: typeof AuthMusicFeaturedArtistsRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/music/data-collect': {
@@ -421,11 +479,14 @@ interface AuthRouteChildren {
   AuthIndexRoute: typeof AuthIndexRoute
   AuthMusicAlbumsRoute: typeof AuthMusicAlbumsRoute
   AuthMusicDataCollectRoute: typeof AuthMusicDataCollectRoute
+  AuthMusicFeaturedArtistsRoute: typeof AuthMusicFeaturedArtistsRoute
   AuthMusicGenresRoute: typeof AuthMusicGenresRoute
+  AuthMusicPopularTracksRoute: typeof AuthMusicPopularTracksRoute
   AuthMusicTracksRoute: typeof AuthMusicTracksRoute
   AuthProductOrdersRoute: typeof AuthProductOrdersRoute
   AuthProductProductCategoriesRoute: typeof AuthProductProductCategoriesRoute
   AuthProductProductsRoute: typeof AuthProductProductsRoute
+  AuthSettingApiTokenRoute: typeof AuthSettingApiTokenRoute
   AuthSettingFaqRoute: typeof AuthSettingFaqRoute
   AuthSettingHomePageSlideShowRoute: typeof AuthSettingHomePageSlideShowRoute
   AuthSettingLogoRoute: typeof AuthSettingLogoRoute
@@ -441,11 +502,14 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthIndexRoute: AuthIndexRoute,
   AuthMusicAlbumsRoute: AuthMusicAlbumsRoute,
   AuthMusicDataCollectRoute: AuthMusicDataCollectRoute,
+  AuthMusicFeaturedArtistsRoute: AuthMusicFeaturedArtistsRoute,
   AuthMusicGenresRoute: AuthMusicGenresRoute,
+  AuthMusicPopularTracksRoute: AuthMusicPopularTracksRoute,
   AuthMusicTracksRoute: AuthMusicTracksRoute,
   AuthProductOrdersRoute: AuthProductOrdersRoute,
   AuthProductProductCategoriesRoute: AuthProductProductCategoriesRoute,
   AuthProductProductsRoute: AuthProductProductsRoute,
+  AuthSettingApiTokenRoute: AuthSettingApiTokenRoute,
   AuthSettingFaqRoute: AuthSettingFaqRoute,
   AuthSettingHomePageSlideShowRoute: AuthSettingHomePageSlideShowRoute,
   AuthSettingLogoRoute: AuthSettingLogoRoute,

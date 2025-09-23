@@ -1,19 +1,19 @@
+import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
+import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
 import { Button } from "@/components/ui/button";
-import { Edit2, MoreHorizontal, Plus, Trash } from "lucide-react";
-import { useForm } from "@tanstack/react-form";
-import { useState } from "react";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
-import { HomePageSlideShowForm } from "./components/form";
-import type { HOME_SLIDE_SHOW, MEDIA } from "@/common/types/type";
-import { config } from "@/common/config/config";
-import { useHomeSlideShow } from "./hooks/use-home-slide-show.hook";
-import { ActionSheet } from "@/components/custom/sheet/sheet";
+import { useBaseHook } from "@/hooks/base.hook"
+import { useForm } from "@tanstack/react-form";
+import type { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
+import { useState } from "react"
 import { toast } from "sonner";
-import { type HomeSlideShowSchemaType } from "@/common/schemas/home-slide-show.schema";
+import { config } from "@/common/config/config";
+import type { HomeSlideShowSchemaType } from "@/common/schemas/home-slide-show.schema";
+import type { HOME_SLIDE_SHOW, MEDIA } from "@/common/types/type";
+import { HomePageSlideShowForm } from "./components/form";
 import { StatusTextWithCircle } from "@/components/custom/typography/typography";
 
 export const HomePageSlideShowPage = () => {
@@ -25,22 +25,22 @@ export const HomePageSlideShowPage = () => {
     updateMutation,
     deleteMutation,
     uploadMutation
-  } = useHomeSlideShow();
+  } = useBaseHook<HomeSlideShowSchemaType>('home-slide-show', '/home-slide-show')
 
   const [open, setOpen] = useState<boolean>(false);
+  const [editedItem, setEditedItem] = useState<HOME_SLIDE_SHOW | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
-  const [selectedSlideShowId, setSelectedSlideShowId] = useState<string>("");
-  const [editedSlideShow, setEditedSlideShow] = useState<HOME_SLIDE_SHOW | null>(null);
+  const [selectedItemId, setSelectedItemId] = useState<string>("");
 
   const handleDelete = (id: string) => {
     setIsDeleteDialogOpen(true);
-    setSelectedSlideShowId(id);
-  };
+    setSelectedItemId(id);
+  }
 
   const handleConfirmDelete = () => {
-    deleteMutation.mutate(selectedSlideShowId);
+    deleteMutation.mutate(selectedItemId);
     setIsDeleteDialogOpen(false);
-  };
+  }
 
   const form = useForm({
     defaultValues: {
@@ -48,56 +48,54 @@ export const HomePageSlideShowPage = () => {
       sub_title: "",
       button_text: "",
       url: "",
-      is_active: true,
       slideShowImage: null,
+      is_active: true,
     },
     onSubmit: async ({ value }) => {
       try {
-        let imageId = editedSlideShow?.image?.id || null;
+        let iconId = editedItem?.image?.id || "";
 
         if (value.slideShowImage) {
-          const uploadedImage = await uploadMutation.mutateAsync(value.slideShowImage);
-          imageId = uploadedImage.id;
+          const uploadImage = await uploadMutation.mutateAsync(value.slideShowImage);
+          iconId = uploadImage.id;
         }
-
         const payload = {
           title: value.title,
           sub_title: value.sub_title,
           button_text: value.button_text,
           url: value.url,
           is_active: value.is_active,
-          image: imageId ? { id: imageId } : undefined,
-        };
+          image: iconId ? { id: iconId } : undefined
+        }
 
-        if (editedSlideShow) {
-          await updateMutation.mutateAsync({
-            id: editedSlideShow.id as string,
-            updatedData: payload
-          });
-          setEditedSlideShow(null);
+        if (editedItem) {
+          await updateMutation.mutateAsync({ ...payload, id: editedItem.id });
+          setEditedItem(null);
         } else {
           await createMutation.mutateAsync(payload as HomeSlideShowSchemaType);
         }
         setOpen(false);
         form.reset();
+        setEditedItem(null);
       } catch (error) {
-        console.error("Form submission failed:", error);
-        toast.error("An error occurred during form submission.");
+        console.error("Form submission failed: ", error);
+        toast.error("An error occurred during the submission.");
       }
-    },
+    }
   }) as any;
 
+  const handleEdit = (item: HOME_SLIDE_SHOW) => {
+    setEditedItem(item);
+    form.setFieldValue("title", item.title);
+    form.setFieldValue("sub_title", item.sub_title);
+    form.setFieldValue("button_text", item.button_text);
+    form.setFieldValue("url", item.url);
+    form.setFieldValue("is_active", item.is_active);
+  }
 
-  const handleEdit = (slideShow: HOME_SLIDE_SHOW) => {
-    setEditedSlideShow(slideShow);
-    form.setFieldValue("title", slideShow.title)
-    form.setFieldValue("sub_title", slideShow.sub_title)
-    form.setFieldValue("button_text", slideShow.button_text)
-    form.setFieldValue("url", slideShow.url)
-  };
 
-  if (isPending) return <h1>Loading...</h1>;
-  if (error) return <h1>Failed to Fetch...</h1>;
+  if (isPending) return <h1>Loading...</h1>
+  if (error) return <h1>Failed to Fetch...</h1>
 
   const columns: ColumnDef<HOME_SLIDE_SHOW>[] = [
     {
@@ -189,15 +187,13 @@ export const HomePageSlideShowPage = () => {
         );
       },
     },
-  ];
-
-  return (
+  ]; return (
     <>
       <BaseContentLayout
-        title="Home Page Slide Show"
+        title="Platform"
         actionButton={
-          <Button variant="outline" type="button" onClick={() => {
-            setEditedSlideShow(null);
+          <Button variant='outline' type="button" onClick={() => {
+            setEditedItem(null);
             form.reset();
             setOpen(true);
           }}>
@@ -205,7 +201,7 @@ export const HomePageSlideShowPage = () => {
           </Button>
         }
         dialogTitle="Create"
-        dialogDescription="Fill out the form to add a new home page slide show."
+        dialogDescription=""
         createForm={<HomePageSlideShowForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
@@ -224,18 +220,16 @@ export const HomePageSlideShowPage = () => {
       />
 
       <ActionSheet
-        title="Edit Slide Show"
-        description="Update the home page slide show."
+        title="Edit Genre"
+        description=""
         updateForm={<HomePageSlideShowForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
-          form.reset(); // form ကိုလည်း reset လုပ်ပေးပါ
-          setEditedSlideShow(null); // edited state ကိုလည်း reset လုပ်ပါ
         }}
-        open={!!editedSlideShow}
-        setOpen={() => setEditedSlideShow(null)}
+        open={!!editedItem}
+        setOpen={() => setEditedItem(null)}
       />
     </>
-  );
-};
+  )
+}

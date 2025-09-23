@@ -1,5 +1,5 @@
 import { RichTextEditor } from "@/components/custom/editor/rich-text-editor";
-import { InputField } from "@/components/custom/input/input-field"
+import { DescriptionField, InputField } from "@/components/custom/input/input-field"
 import { useForm } from "@tanstack/react-form"
 
 interface CreateFAQFormProps {
@@ -15,7 +15,11 @@ export const FAQForm = ({ form }: CreateFAQFormProps) => {
           <InputField title="Question" field={field} required />
         )}
       </form.Field>
-      <RichTextEditor />
+      <form.Field name="answer">
+        {(field) => (
+          <DescriptionField title="Answer" field={field} required />
+        )}
+      </form.Field>
     </div>
   );
 };

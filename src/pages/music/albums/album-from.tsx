@@ -35,7 +35,6 @@ export const AlbumForm = ({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DialogHeader>Album Form</DialogHeader>
       <DialogContent>
         <form onSubmit={(e) => {
           e.preventDefault();
