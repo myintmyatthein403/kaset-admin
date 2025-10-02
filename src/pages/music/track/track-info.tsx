@@ -77,6 +77,14 @@ export const TrackInfo = ({ form }: { form: any }) => {
         }
       </form.Field>
 
+      <form.Field name="credit">
+        {
+          (field: any) => (
+            <DescriptionField field={field} title="Credit" placeholder="Enter credit" />
+          )
+        }
+      </form.Field>
+
       <form.Field name="duration">
         {
           (field: any) => (

@@ -20,7 +20,11 @@ import {
   Globe,
   Key,
   TrendingUp,
-  Flame
+  Flame,
+  Tag,
+  List,
+  Currency,
+  Sparkles
 } from "lucide-react";
 
 export const sidebarGroups = [
@@ -66,6 +70,11 @@ export const sidebarGroups = [
         title: "Order",
         url: "/product/orders",
         icon: ShoppingBasket
+      },
+      {
+        title: "Featured Products",
+        url: "/product/featured-products",
+        icon: Sparkles
       }
     ],
   },
@@ -156,6 +165,11 @@ export const sidebarGroups = [
         title: "Social Link",
         url: "/setting/social-link",
         icon: Link
+      },
+      {
+        title: "Exchange Rate",
+        url: "/setting/exchange-rate",
+        icon: Currency
       }
     ],
   },

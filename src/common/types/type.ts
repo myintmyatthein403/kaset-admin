@@ -25,12 +25,31 @@ export type GENRE = BASE_TYPE & {
   description?: string | null;
 }
 
+export type EXCHANGE_RATE = BASE_TYPE & {
+  currency: string;
+  rate: number;
+}
+
+export type PRODUCT_ATTRIBUTE = BASE_TYPE & {
+  name: string;
+}
+
+export type PRODUCT_ATTRIBUTE_VALUE = BASE_TYPE & {
+  attribute: string;
+  value: string;
+  product_attribute: PRODUCT_ATTRIBUTE
+}
+
 export type POPULAR_TRACK = BASE_TYPE & {
   tracks: TRACK[]
 }
 
 export type FEATURED_ARTIST = BASE_TYPE & {
   artist: TRACK[]
+}
+
+export type FEATURED_PRODUCT = BASE_TYPE & {
+  products: PRODUCT[];
 }
 
 export type TRACK = BASE_TYPE & {
@@ -109,6 +128,7 @@ export type PRODUCT_CATEGORY = BASE_TYPE & {
 export type PRODUCT = BASE_TYPE & {
   name: string;
   about?: string;
+  description?: string;
   base_price: number;
   slug: string;
   is_out_of_stock: boolean;
@@ -116,7 +136,18 @@ export type PRODUCT = BASE_TYPE & {
   stripe_price_id?: string;
   included_item?: string;
   product_category: PRODUCT_CATEGORY;
-  product_image: MEDIA;
+  productImages: MEDIA[];
+  product_images: MEDIA[];
+  variations: PRODUCT_VARIATION;
+}
+
+export type PRODUCT_VARIATION = BASE_TYPE & {
+  sku: string;
+  price: number;
+  size: string;
+  color_name: string;
+  color_code: string;
+  is_out_of_stock: boolean;
 }
 
 export type MEDIA = {

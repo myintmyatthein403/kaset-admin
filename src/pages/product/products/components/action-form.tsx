@@ -1,15 +1,38 @@
 import type { PRODUCT } from "@/common/types/type";
 import { generateSlug } from "@/common/utils/slug.util";
-import { RichTextEditor } from "@/components/custom/editor/rich-text-editor";
 import { Combobox } from "@/components/custom/input/combobox";
 import { FileUploader } from "@/components/custom/input/file-uploader";
 import { DescriptionField, InputField, SlugField, SwitchField } from "@/components/custom/input/input-field";
+import { Button } from "@/components/ui/button";
 import { useBaseHook } from "@/hooks/base.hook";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
+import { nanoid } from 'nanoid';
+import { VariantForm } from "./variant-form";
+import { Plus } from "lucide-react";
+
 
 interface ProductFormProps {
   form: ReturnType<typeof useForm>
+}
+
+type FormValues = {
+  name: string;
+  slug: string;
+  about: string;
+  base_price: number;
+  is_out_of_stock: boolean;
+  product_image: File | null;
+  product_category: string;
+  variants: {
+    id: string;
+    sku: string;
+    price: number;
+    color_code: string;
+    color_name: string;
+    size: string;
+    is_out_of_stock: string;
+  }[];
 }
 
 export const ProductForm = ({
@@ -48,6 +71,11 @@ export const ProductForm = ({
           <InputField title="Name" field={field} required />
         )}
       </form.Field>
+      <form.Field name="description">
+        {(field) => (
+          <DescriptionField title="Description" field={field} />
+        )}
+      </form.Field>
       <form.Field name="slug">
         {(field) => (
           <SlugField title="Slug" field={field} required isSpinning={isSpinning} handleGenerateSlug={handleGenerateSlug} />
@@ -70,13 +98,14 @@ export const ProductForm = ({
           )}
         </form.Field>
       </div>
-      <form.Field name="product_image">
+      <form.Field name="productImages">
         {(field) => (
           <FileUploader
             fieldName={field.name}
             title="Track Image"
-            file={field.state.value as File}
-            setFile={field.handleChange}
+            files={field.state.value as File[] || []}
+            setFiles={field.handleChange}
+            isMultiSelect
           />
 
         )}
@@ -86,7 +115,36 @@ export const ProductForm = ({
           <Combobox field={field} title="Select Category" required options={productCategories} />
         )}
       </form.Field>
-      <RichTextEditor />
+      <form.Field name="variants">
+        {(field) => {
+          const val = field.state.value as FormValues[];
+          console.log(val)
+          return (
+            <div>
+              {
+                val?.map((variant: any, index: number) => (
+                  <div key={variant.id} className="flex space-x-2 my-2">
+                    <VariantForm variant={variant} index={index} form={form} />
+                  </div>
+                ))
+              }
+            </div>
+          )
+        }}
+      </form.Field>
+      <Button
+        type="button"
+        onClick={() => {
+          const variantsField = form.getFieldValue('variants');
+
+          const updatedVariants = Array.isArray(variantsField)
+            ? [...variantsField, { id: nanoid(), sku: "", size: "", color_name: "", color_code: "", price: 0, is_out_of_stock: false }]
+            : [];
+          form.setFieldValue('variants', updatedVariants);
+        }}
+      >
+        <Plus />Add Variant
+      </Button>
     </div>
   )
 }

@@ -81,16 +81,16 @@ export const TrackPage = () => {
       form.setFieldValue('slug', trackData.slug);
       form.setFieldValue('duration', trackData.duration);
       form.setFieldValue('genres', trackData.genres.map((genre: { id: string }) => genre.id));
-      form.setFieldValue('spotify_url', trackData.spotify_url);
       form.setFieldValue('artists', trackData.artists.map((artist: { id: string }) => artist.id));
       form.setFieldValue('lyric_type', trackData.lyric_type)
       form.setFieldValue('lyric_text', trackData.lyric_text);
       form.setFieldValue('chord_text', trackData.chord_text);
       form.setFieldValue('chord_type', trackData.chord_type);
+      form.setFieldValue('credit', trackData.credit)
       if (trackData.music_links && trackData.music_links.length > 0) {
         const formattedPairs = trackData.music_links.map((link: any) => ({
           id: link.id || nanoid(),
-          dropdownValue: link.platform,
+          dropdownValue: link.platform.id,
           textValue: link.url,
         }));
         form.setFieldValue("pairs", formattedPairs);
@@ -109,8 +109,13 @@ export const TrackPage = () => {
     defaultValues: {
       name: '',
       description: '',
+      credit: '',
       slug: '',
       duration: '',
+      lyric_type: '',
+      lyric_text: '',
+      chord_type: '',
+      chord_text: '',
       genres: [],
       artists: [],
       trackImage: null,

@@ -2,7 +2,7 @@ import { tokenService } from "@/common/services/token.service"
 import { fetchData, fetcher } from "@/lib/axios"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { useUploadSingleFile } from "./use-upload-file.hook"
+import { useUploadMultipleFiles, useUploadSingleFile } from "./use-upload-file.hook"
 
 // NOTE: The `createItem`, `updateItem`, and `deleteItem` functions are
 // generic and can handle any data type.
@@ -47,6 +47,7 @@ const deleteItem = async (url: string) => {
 export const useBaseHook = <T>(name: string, url: string) => {
   const queryClient = useQueryClient();
   const uploadMutation = useUploadSingleFile();
+  const uploadMultiMutation = useUploadMultipleFiles();
 
   const { data, isPending, error } = useQuery({
     queryKey: [name],
@@ -98,6 +99,7 @@ export const useBaseHook = <T>(name: string, url: string) => {
     createMutation,
     updateMutation,
     deleteMutation,
-    uploadMutation
+    uploadMutation,
+    uploadMultiMutation
   }
 }

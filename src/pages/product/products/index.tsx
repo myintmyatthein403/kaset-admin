@@ -10,11 +10,13 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import type { MEDIA, PRODUCT } from "@/common/types/type";
+import type { MEDIA, PRODUCT, PRODUCT_VARIATION } from "@/common/types/type";
 import { ProductForm } from "./components/action-form";
 import { useUploadSingleFile } from "@/hooks/use-upload-file.hook";
 import { config } from "@/common/config/config";
 import type { productSchemaType } from "@/common/schemas/product.schema";
+import { StatusTextWithCircle } from "@/components/custom/typography/typography";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const ProductPage = () => {
   const {
@@ -23,9 +25,9 @@ export const ProductPage = () => {
     error,
     createMutation,
     updateMutation,
-    deleteMutation
+    deleteMutation,
+    uploadMutation
   } = useBaseHook<productSchemaType>('products', '/products')
-  const uploadFile = useUploadSingleFile()
 
   const [open, setOpen] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<PRODUCT | null>(null);
@@ -49,26 +51,44 @@ export const ProductPage = () => {
       base_price: "",
       is_out_of_stock: false,
       included_item: "",
-      product_image: null,
+      productImages: [],
       product_category: null,
+      product_images: [],
+      variants: [],
+      description: ""
     },
     onSubmit: async ({ value }) => {
       try {
-        let productImageId;
-        if (value.product_image) {
-          productImageId = await uploadFile.mutateAsync(value.product_image)
+        let productImageIds;
+        const { productImages, variants, ...restValues } = value;
+        if (productImages && productImages.length > 0) {
+          const createdFiles = await Promise.all(productImages.map(async (productImage: any) => {
+            const response = await uploadMutation.mutateAsync(productImage)
+            return response?.id
+          }))
+          productImageIds = createdFiles.map((file) => ({ id: file }))
+        }
+        const finalPayload = {
+          ...restValues,
+          ...(variants && variants.length > 0 && {
+            variations: variants.map((v: any) => {
+              const { id, ...rest } = v;
+              return rest
+            })
+          }),
+          ...(productImageIds && productImageIds.length > 0 && { product_images: productImageIds })
         }
         if (editedItem) {
-          await updateMutation.mutateAsync({ ...value, product_image: productImageId, id: editedItem.id });
+          await updateMutation.mutateAsync({ ...finalPayload as any, id: editedItem.id });
           setEditedItem(null);
         } else {
           await createMutation.mutateAsync({
-            ...value,
+            ...finalPayload,
             product_category: {
               id: value.product_category
             },
-            product_image: productImageId
-          } as productSchemaType);
+            product_images: productImageIds
+          } as any);
         }
         setOpen(false);
         form.reset();
@@ -89,6 +109,9 @@ export const ProductPage = () => {
     form.setFieldValue("about", item.about);
     form.setFieldValue("included_item", item.included_item);
     form.setFieldValue("product_category", item.product_category.id)
+    form.setFieldValue("variants", item.variations);
+    form.setFieldValue("product_images", item.product_images)
+    form.setFieldValue("description", item.description)
     //form.setFieldValue("product_image", item.product_image.id)
   }
 
@@ -120,12 +143,13 @@ export const ProductPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "product_image",
+      accessorKey: "product_images",
       header: "Product Image",
       cell: ({ row }) => {
-        const media = row.getValue('product_image') as MEDIA;
-        if (!media || !media.url) return null;
-        const imgSrc = `${config.BASE_MEDIA_URL}${media.url}`;
+        const media = row.getValue('product_images') as MEDIA[];
+        if (!media || !media[0]?.url) return null;
+        const imgSrc = `${config.BASE_MEDIA_URL}${media[0]?.url
+          }`;
         return <img src={imgSrc} alt="home-slide-show" className="w-15 h-15 rounded-full" />;
       },
     },
@@ -140,8 +164,89 @@ export const ProductPage = () => {
       accessorKey: "slug",
       header: "Slug",
       cell: ({ row }) => (
-        <div>{`/${row.getValue("slug")}` || '-'}</div>
+        <div>{`/ ${row.getValue("slug")}` || '-'}</div>
       )
+    },
+    {
+      accessorKey: "base_price",
+      header: "Base Price",
+      cell: ({ row }) => (
+        <div>{`฿ ${row.getValue("base_price")}` || '-'}</div>
+      )
+    },
+    {
+      accessorKey: "is_out_of_stock",
+      header: "Stock",
+      cell: ({ row }) => {
+        const status = row.getValue('is_out_of_stock') ? 'failed' : 'success'
+        const text = row.getValue('is_out_of_stock') ? 'Out of Stock' : 'In Stock'
+        return (
+          <StatusTextWithCircle status={status} text={text} />
+        )
+      },
+    },
+    {
+      accessorKey: "variations",
+      header: "Variations",
+      cell: ({ row }) => {
+        const variations = row.getValue('variations') as PRODUCT_VARIATION[];
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-center cursor-pointer">{variations.length}</div>
+              </TooltipTrigger>
+              <TooltipContent>
+                {/* Your tooltip content goes here */}
+                <div>
+                  {variations.length > 0 ? (
+                    <ul>
+                      {variations.map((variation, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between py-2 border-b border-gray-200"
+                        >
+                          <div className="flex items-center space-x-3">
+                            {/* Color swatch and name */}
+                            <span
+                              className="inline-block w-4 h-4 rounded-full border border-gray-300"
+                              style={{ backgroundColor: variation.color_code }}
+                            ></span>
+                            <span className="font-bold">{variation.color_name}</span>
+
+                            {/* Size and SKU */}
+                            <span className="text-sm text-gray-600">
+                              <strong>Size:</strong> {variation.size}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              <strong>SKU:</strong> {variation.sku}
+                            </span>
+                          </div>
+
+                          {/* Price and status are now grouped and centered vertically */}
+                          <div className="flex items-center space-x-2">
+                            <span className="font-bold">${variation.price}</span>
+
+                            {/* Use a container with a fixed width to prevent alignment shift */}
+                            <span className="w-24 text-center">
+                              {variation.is_out_of_stock ? (
+                                <span className="text-red-500 font-bold">(Out of Stock)</span>
+                              ) : (
+                                <span className="text-green-500 font-bold">(In Stock)</span>
+                              )}
+                            </span>
+                          </div>
+                        </li>))}
+                    </ul>
+                  ) : (
+                    <p>No variations available</p>
+                  )}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      },
     },
     {
       id: "actions",
