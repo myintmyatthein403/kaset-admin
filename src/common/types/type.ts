@@ -25,6 +25,13 @@ export type GENRE = BASE_TYPE & {
   description?: string | null;
 }
 
+export type COLLECTION = BASE_TYPE & {
+  title: string;
+  slug: string;
+  background: MEDIA;
+  tracks: TRACK[];
+}
+
 export type EXCHANGE_RATE = BASE_TYPE & {
   currency: string;
   rate: number;

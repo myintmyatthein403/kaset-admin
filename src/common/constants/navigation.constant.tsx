@@ -24,7 +24,8 @@ import {
   Tag,
   List,
   Currency,
-  Sparkles
+  Sparkles,
+  Headphones
 } from "lucide-react";
 
 export const sidebarGroups = [
@@ -100,6 +101,11 @@ export const sidebarGroups = [
         title: "Data-Collect",
         url: "/music/data-collect",
         icon: Database
+      },
+      {
+        title: 'Collections',
+        url: "/music/collections",
+        icon: Headphones
       },
       {
         title: "Popular Tracks",

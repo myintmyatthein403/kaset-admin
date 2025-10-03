@@ -35,6 +35,7 @@ import { Route as AuthMusicPopularTracksRouteImport } from './routes/_auth/music
 import { Route as AuthMusicGenresRouteImport } from './routes/_auth/music/genres'
 import { Route as AuthMusicFeaturedArtistsRouteImport } from './routes/_auth/music/featured-artists'
 import { Route as AuthMusicDataCollectRouteImport } from './routes/_auth/music/data-collect'
+import { Route as AuthMusicCollectionsRouteImport } from './routes/_auth/music/collections'
 import { Route as AuthMusicAlbumsRouteImport } from './routes/_auth/music/albums'
 
 const AuthRoute = AuthRouteImport.update({
@@ -173,6 +174,11 @@ const AuthMusicDataCollectRoute = AuthMusicDataCollectRouteImport.update({
   path: '/music/data-collect',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthMusicCollectionsRoute = AuthMusicCollectionsRouteImport.update({
+  id: '/music/collections',
+  path: '/music/collections',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthMusicAlbumsRoute = AuthMusicAlbumsRouteImport.update({
   id: '/music/albums',
   path: '/music/albums',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AuthIndexRoute
   '/music/albums': typeof AuthMusicAlbumsRoute
+  '/music/collections': typeof AuthMusicCollectionsRoute
   '/music/data-collect': typeof AuthMusicDataCollectRoute
   '/music/featured-artists': typeof AuthMusicFeaturedArtistsRoute
   '/music/genres': typeof AuthMusicGenresRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AuthIndexRoute
   '/music/albums': typeof AuthMusicAlbumsRoute
+  '/music/collections': typeof AuthMusicCollectionsRoute
   '/music/data-collect': typeof AuthMusicDataCollectRoute
   '/music/featured-artists': typeof AuthMusicFeaturedArtistsRoute
   '/music/genres': typeof AuthMusicGenresRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/_auth/': typeof AuthIndexRoute
   '/_auth/music/albums': typeof AuthMusicAlbumsRoute
+  '/_auth/music/collections': typeof AuthMusicCollectionsRoute
   '/_auth/music/data-collect': typeof AuthMusicDataCollectRoute
   '/_auth/music/featured-artists': typeof AuthMusicFeaturedArtistsRoute
   '/_auth/music/genres': typeof AuthMusicGenresRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/'
     | '/music/albums'
+    | '/music/collections'
     | '/music/data-collect'
     | '/music/featured-artists'
     | '/music/genres'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/'
     | '/music/albums'
+    | '/music/collections'
     | '/music/data-collect'
     | '/music/featured-artists'
     | '/music/genres'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/_auth/'
     | '/_auth/music/albums'
+    | '/_auth/music/collections'
     | '/_auth/music/data-collect'
     | '/_auth/music/featured-artists'
     | '/_auth/music/genres'
@@ -543,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthMusicDataCollectRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/music/collections': {
+      id: '/_auth/music/collections'
+      path: '/music/collections'
+      fullPath: '/music/collections'
+      preLoaderRoute: typeof AuthMusicCollectionsRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/music/albums': {
       id: '/_auth/music/albums'
       path: '/music/albums'
@@ -557,6 +576,7 @@ interface AuthRouteChildren {
   AuthSlideShowRoute: typeof AuthSlideShowRoute
   AuthIndexRoute: typeof AuthIndexRoute
   AuthMusicAlbumsRoute: typeof AuthMusicAlbumsRoute
+  AuthMusicCollectionsRoute: typeof AuthMusicCollectionsRoute
   AuthMusicDataCollectRoute: typeof AuthMusicDataCollectRoute
   AuthMusicFeaturedArtistsRoute: typeof AuthMusicFeaturedArtistsRoute
   AuthMusicGenresRoute: typeof AuthMusicGenresRoute
@@ -584,6 +604,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthSlideShowRoute: AuthSlideShowRoute,
   AuthIndexRoute: AuthIndexRoute,
   AuthMusicAlbumsRoute: AuthMusicAlbumsRoute,
+  AuthMusicCollectionsRoute: AuthMusicCollectionsRoute,
   AuthMusicDataCollectRoute: AuthMusicDataCollectRoute,
   AuthMusicFeaturedArtistsRoute: AuthMusicFeaturedArtistsRoute,
   AuthMusicGenresRoute: AuthMusicGenresRoute,
