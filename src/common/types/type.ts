@@ -98,7 +98,7 @@ export type USER_PROFILE = BASE_TYPE & {
   profile_image?: MEDIA;
   generes?: GENRE[];
   slug: string;
-  feature_videos?: MEDIA[];
+  featured_video?: string;
   social_media_links?: SOCIAL_MEDIA_LINK[];
 }
 

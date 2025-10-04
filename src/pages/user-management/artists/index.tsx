@@ -47,6 +47,7 @@ export const ArtistPage = () => {
     pairs: { id: string; dropdownValue: string; textValue: string }[];
     coverImage: any;
     profileImage: any;
+    featured_video: string;
   };
 
   const form = useForm({
@@ -57,6 +58,7 @@ export const ArtistPage = () => {
       pairs: [{ id: nanoid(), dropdownValue: '', textValue: '' }],
       coverImage: null,
       profileImage: null,
+      featured_video: ""
     } as FormValues,
     onSubmit: async ({ value }) => {
       try {
@@ -115,6 +117,7 @@ export const ArtistPage = () => {
     form.setFieldValue("bio", item.bio);
     form.setFieldValue("location", item.location);
     form.setFieldValue("email", item.email);
+    form.setFieldValue("featured_video", item.featured_video)
   }
 
   if (isPending) return <h1>Loading...</h1>

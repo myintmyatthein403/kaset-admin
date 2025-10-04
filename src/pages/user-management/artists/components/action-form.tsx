@@ -65,6 +65,11 @@ export const ArtistForm = ({
           )}
         </form.Field>
       </div>
+      <form.Field name="featured_video">
+        {(field) => (
+          <InputField field={field} title="Featured Video Link" className="w-full" />)
+        }
+      </form.Field>
       <form.Field name="coverImage">
         {(field: any) => (
           <FileUploader
@@ -82,17 +87,6 @@ export const ArtistForm = ({
             title="Profile Image"
             file={field.state.value}
             setFile={field.handleChange}
-          />
-        )}
-      </form.Field>
-      <form.Field name="feature_videos">
-        {(field: any) => (
-          <VideoUploader
-            fieldName={field.name}
-            title="Feature Videos"
-            files={field.state.value}
-            setFiles={field.handleChange}
-            isMultiSelect
           />
         )}
       </form.Field>
