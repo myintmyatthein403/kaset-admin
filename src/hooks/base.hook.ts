@@ -92,6 +92,18 @@ export const useBaseHook = <T>(name: string, url: string) => {
     }
   });
 
+  const softDeleteMutation = useMutation<any, Error, string>({
+    mutationFn: (id) => deleteItem(`${url}/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [name] });
+      toast.success(`${name} deleted successfully.`)
+    },
+    onError: (err) => {
+      console.error(`Error deleting ${name}:`, err);
+      toast.error(`Failed to delete ${name}.`)
+    }
+  });
+
   return {
     data: data?.data,
     isPending,
@@ -99,6 +111,7 @@ export const useBaseHook = <T>(name: string, url: string) => {
     createMutation,
     updateMutation,
     deleteMutation,
+    softDeleteMutation,
     uploadMutation,
     uploadMultiMutation
   }

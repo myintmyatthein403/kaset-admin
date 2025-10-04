@@ -25,7 +25,7 @@ export const ProductPage = () => {
     error,
     createMutation,
     updateMutation,
-    deleteMutation,
+    softDeleteMutation,
     uploadMutation
   } = useBaseHook<productSchemaType>('products', '/products')
 
@@ -34,13 +34,15 @@ export const ProductPage = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
+  const products = data?.data.filter((p: any) => p.is_active)
+
   const handleDelete = (id: string) => {
     setIsDeleteDialogOpen(true);
     setSelectedItemId(id);
   }
 
   const handleConfirmDelete = () => {
-    deleteMutation.mutate(selectedItemId);
+    softDeleteMutation.mutate(selectedItemId);
     setIsDeleteDialogOpen(false);
   }
 
@@ -302,7 +304,7 @@ export const ProductPage = () => {
         open={open}
         setOpen={setOpen}
         columns={columns}
-        data={data?.data || []}
+        data={products || []}
       />
 
       <ConfirmDeleteDialog
