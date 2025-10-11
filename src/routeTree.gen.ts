@@ -28,7 +28,6 @@ import { Route as AuthProductProductsRouteImport } from './routes/_auth/product/
 import { Route as AuthProductProductCategoriesRouteImport } from './routes/_auth/product/product-categories'
 import { Route as AuthProductProductAttributesRouteImport } from './routes/_auth/product/product-attributes'
 import { Route as AuthProductProductAttributeValuesRouteImport } from './routes/_auth/product/product-attribute-values'
-import { Route as AuthProductOrdersRouteImport } from './routes/_auth/product/orders'
 import { Route as AuthProductFeaturedProductsRouteImport } from './routes/_auth/product/featured-products'
 import { Route as AuthMusicTracksRouteImport } from './routes/_auth/music/tracks'
 import { Route as AuthMusicPopularTracksRouteImport } from './routes/_auth/music/popular-tracks'
@@ -37,6 +36,8 @@ import { Route as AuthMusicFeaturedArtistsRouteImport } from './routes/_auth/mus
 import { Route as AuthMusicDataCollectRouteImport } from './routes/_auth/music/data-collect'
 import { Route as AuthMusicCollectionsRouteImport } from './routes/_auth/music/collections'
 import { Route as AuthMusicAlbumsRouteImport } from './routes/_auth/music/albums'
+import { Route as AuthProductOrdersIndexRouteImport } from './routes/_auth/product/orders/index'
+import { Route as AuthProductOrdersOrderIdRouteImport } from './routes/_auth/product/orders/$orderId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -137,11 +138,6 @@ const AuthProductProductAttributeValuesRoute =
     path: '/product/product-attribute-values',
     getParentRoute: () => AuthRoute,
   } as any)
-const AuthProductOrdersRoute = AuthProductOrdersRouteImport.update({
-  id: '/product/orders',
-  path: '/product/orders',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthProductFeaturedProductsRoute =
   AuthProductFeaturedProductsRouteImport.update({
     id: '/product/featured-products',
@@ -184,6 +180,17 @@ const AuthMusicAlbumsRoute = AuthMusicAlbumsRouteImport.update({
   path: '/music/albums',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthProductOrdersIndexRoute = AuthProductOrdersIndexRouteImport.update({
+  id: '/product/orders/',
+  path: '/product/orders/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthProductOrdersOrderIdRoute =
+  AuthProductOrdersOrderIdRouteImport.update({
+    id: '/product/orders/$orderId',
+    path: '/product/orders/$orderId',
+    getParentRoute: () => AuthRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/slide-show': typeof AuthSlideShowRoute
@@ -198,7 +205,6 @@ export interface FileRoutesByFullPath {
   '/music/popular-tracks': typeof AuthMusicPopularTracksRoute
   '/music/tracks': typeof AuthMusicTracksRoute
   '/product/featured-products': typeof AuthProductFeaturedProductsRoute
-  '/product/orders': typeof AuthProductOrdersRoute
   '/product/product-attribute-values': typeof AuthProductProductAttributeValuesRoute
   '/product/product-attributes': typeof AuthProductProductAttributesRoute
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
@@ -213,6 +219,8 @@ export interface FileRoutesByFullPath {
   '/user-management/artist': typeof AuthUserManagementArtistRoute
   '/user-management/roles': typeof AuthUserManagementRolesRoute
   '/setting': typeof AuthSettingIndexRoute
+  '/product/orders/$orderId': typeof AuthProductOrdersOrderIdRoute
+  '/product/orders': typeof AuthProductOrdersIndexRoute
 }
 export interface FileRoutesByTo {
   '/slide-show': typeof AuthSlideShowRoute
@@ -227,7 +235,6 @@ export interface FileRoutesByTo {
   '/music/popular-tracks': typeof AuthMusicPopularTracksRoute
   '/music/tracks': typeof AuthMusicTracksRoute
   '/product/featured-products': typeof AuthProductFeaturedProductsRoute
-  '/product/orders': typeof AuthProductOrdersRoute
   '/product/product-attribute-values': typeof AuthProductProductAttributeValuesRoute
   '/product/product-attributes': typeof AuthProductProductAttributesRoute
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
@@ -242,6 +249,8 @@ export interface FileRoutesByTo {
   '/user-management/artist': typeof AuthUserManagementArtistRoute
   '/user-management/roles': typeof AuthUserManagementRolesRoute
   '/setting': typeof AuthSettingIndexRoute
+  '/product/orders/$orderId': typeof AuthProductOrdersOrderIdRoute
+  '/product/orders': typeof AuthProductOrdersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -258,7 +267,6 @@ export interface FileRoutesById {
   '/_auth/music/popular-tracks': typeof AuthMusicPopularTracksRoute
   '/_auth/music/tracks': typeof AuthMusicTracksRoute
   '/_auth/product/featured-products': typeof AuthProductFeaturedProductsRoute
-  '/_auth/product/orders': typeof AuthProductOrdersRoute
   '/_auth/product/product-attribute-values': typeof AuthProductProductAttributeValuesRoute
   '/_auth/product/product-attributes': typeof AuthProductProductAttributesRoute
   '/_auth/product/product-categories': typeof AuthProductProductCategoriesRoute
@@ -273,6 +281,8 @@ export interface FileRoutesById {
   '/_auth/user-management/artist': typeof AuthUserManagementArtistRoute
   '/_auth/user-management/roles': typeof AuthUserManagementRolesRoute
   '/_auth/setting/': typeof AuthSettingIndexRoute
+  '/_auth/product/orders/$orderId': typeof AuthProductOrdersOrderIdRoute
+  '/_auth/product/orders/': typeof AuthProductOrdersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -289,7 +299,6 @@ export interface FileRouteTypes {
     | '/music/popular-tracks'
     | '/music/tracks'
     | '/product/featured-products'
-    | '/product/orders'
     | '/product/product-attribute-values'
     | '/product/product-attributes'
     | '/product/product-categories'
@@ -304,6 +313,8 @@ export interface FileRouteTypes {
     | '/user-management/artist'
     | '/user-management/roles'
     | '/setting'
+    | '/product/orders/$orderId'
+    | '/product/orders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/slide-show'
@@ -318,7 +329,6 @@ export interface FileRouteTypes {
     | '/music/popular-tracks'
     | '/music/tracks'
     | '/product/featured-products'
-    | '/product/orders'
     | '/product/product-attribute-values'
     | '/product/product-attributes'
     | '/product/product-categories'
@@ -333,6 +343,8 @@ export interface FileRouteTypes {
     | '/user-management/artist'
     | '/user-management/roles'
     | '/setting'
+    | '/product/orders/$orderId'
+    | '/product/orders'
   id:
     | '__root__'
     | '/_auth'
@@ -348,7 +360,6 @@ export interface FileRouteTypes {
     | '/_auth/music/popular-tracks'
     | '/_auth/music/tracks'
     | '/_auth/product/featured-products'
-    | '/_auth/product/orders'
     | '/_auth/product/product-attribute-values'
     | '/_auth/product/product-attributes'
     | '/_auth/product/product-categories'
@@ -363,6 +374,8 @@ export interface FileRouteTypes {
     | '/_auth/user-management/artist'
     | '/_auth/user-management/roles'
     | '/_auth/setting/'
+    | '/_auth/product/orders/$orderId'
+    | '/_auth/product/orders/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -506,13 +519,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProductProductAttributeValuesRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/product/orders': {
-      id: '/_auth/product/orders'
-      path: '/product/orders'
-      fullPath: '/product/orders'
-      preLoaderRoute: typeof AuthProductOrdersRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/_auth/product/featured-products': {
       id: '/_auth/product/featured-products'
       path: '/product/featured-products'
@@ -569,6 +575,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthMusicAlbumsRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/product/orders/': {
+      id: '/_auth/product/orders/'
+      path: '/product/orders'
+      fullPath: '/product/orders'
+      preLoaderRoute: typeof AuthProductOrdersIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/product/orders/$orderId': {
+      id: '/_auth/product/orders/$orderId'
+      path: '/product/orders/$orderId'
+      fullPath: '/product/orders/$orderId'
+      preLoaderRoute: typeof AuthProductOrdersOrderIdRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
@@ -583,7 +603,6 @@ interface AuthRouteChildren {
   AuthMusicPopularTracksRoute: typeof AuthMusicPopularTracksRoute
   AuthMusicTracksRoute: typeof AuthMusicTracksRoute
   AuthProductFeaturedProductsRoute: typeof AuthProductFeaturedProductsRoute
-  AuthProductOrdersRoute: typeof AuthProductOrdersRoute
   AuthProductProductAttributeValuesRoute: typeof AuthProductProductAttributeValuesRoute
   AuthProductProductAttributesRoute: typeof AuthProductProductAttributesRoute
   AuthProductProductCategoriesRoute: typeof AuthProductProductCategoriesRoute
@@ -598,6 +617,8 @@ interface AuthRouteChildren {
   AuthUserManagementArtistRoute: typeof AuthUserManagementArtistRoute
   AuthUserManagementRolesRoute: typeof AuthUserManagementRolesRoute
   AuthSettingIndexRoute: typeof AuthSettingIndexRoute
+  AuthProductOrdersOrderIdRoute: typeof AuthProductOrdersOrderIdRoute
+  AuthProductOrdersIndexRoute: typeof AuthProductOrdersIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -611,7 +632,6 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthMusicPopularTracksRoute: AuthMusicPopularTracksRoute,
   AuthMusicTracksRoute: AuthMusicTracksRoute,
   AuthProductFeaturedProductsRoute: AuthProductFeaturedProductsRoute,
-  AuthProductOrdersRoute: AuthProductOrdersRoute,
   AuthProductProductAttributeValuesRoute:
     AuthProductProductAttributeValuesRoute,
   AuthProductProductAttributesRoute: AuthProductProductAttributesRoute,
@@ -627,6 +647,8 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthUserManagementArtistRoute: AuthUserManagementArtistRoute,
   AuthUserManagementRolesRoute: AuthUserManagementRolesRoute,
   AuthSettingIndexRoute: AuthSettingIndexRoute,
+  AuthProductOrdersOrderIdRoute: AuthProductOrdersOrderIdRoute,
+  AuthProductOrdersIndexRoute: AuthProductOrdersIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

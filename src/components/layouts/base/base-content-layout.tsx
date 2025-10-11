@@ -14,6 +14,7 @@ interface BaseContentLayoutProps {
   setOpen: (val: boolean) => void;
   columns: ColumnDef<any>[];
   data: any[];
+  handleClick?: (row: any) => void
 }
 
 export const BaseContentLayout = ({
@@ -27,6 +28,7 @@ export const BaseContentLayout = ({
   setOpen,
   columns,
   data,
+  handleClick
 }: BaseContentLayoutProps) => {
   return (
     <div className="px-6 py-10 flex flex-col gap-4">
@@ -42,7 +44,7 @@ export const BaseContentLayout = ({
           setOpen={setOpen}
         />
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} handleClick={handleClick} />
     </div>
   )
 }

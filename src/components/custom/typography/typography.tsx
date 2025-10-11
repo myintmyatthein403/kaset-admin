@@ -8,6 +8,8 @@ export const StatusTextWithCircle = ({ status, text }: StatusTextWithCircleProps
   let circleColorClass = 'bg-gray-400';
   switch (status) {
     case 'success':
+    case 'paid':
+    case 'shipped':
       textColorClass = 'text-green-600';
       circleColorClass = 'bg-green-500';
       break;
@@ -20,6 +22,7 @@ export const StatusTextWithCircle = ({ status, text }: StatusTextWithCircleProps
       circleColorClass = 'bg-red-500';
       break;
     case 'info':
+    case 'processing':
       textColorClass = 'text-blue-600';
       circleColorClass = 'bg-blue-500';
       break;

@@ -1,18 +1,20 @@
-import { type GENRE } from "@/common/types/type";
+import { type GENRE, type PRODUCT_VARIATION } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useBaseHook } from "@/hooks/base.hook"
 import { useForm } from "@tanstack/react-form";
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
 import type { genreSchemaType } from "@/common/schemas/genre.schema";
 import { OrderForm } from "./component/action-form";
+import { StatusTextWithCircle } from "@/components/custom/typography/typography";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useNavigate } from "@tanstack/react-router";
 
 export const OrderPage = () => {
   const {
@@ -22,12 +24,13 @@ export const OrderPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<genreSchemaType>('genres', '/genres')
+  } = useBaseHook<genreSchemaType>('orders', '/order')
 
   const [open, setOpen] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<GENRE | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
+  const navigate = useNavigate()
 
   const handleDelete = (id: string) => {
     setIsDeleteDialogOpen(true);
@@ -68,6 +71,9 @@ export const OrderPage = () => {
     form.setFieldValue("description", item.description);
   }
 
+  const handleClick = (rowData: any) => {
+    navigate({ to: '/product/orders/$orderId', params: { orderId: rowData.id } });
+  }
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
@@ -96,48 +102,132 @@ export const OrderPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "name",
-      header: "name",
+      accessorKey: "id",
+      header: "Order Number",
       cell: ({ row }) => (
-        <div>{row.getValue("name")}</div>
+        <div>{row.getValue("id")}</div>
       ),
     },
     {
-      accessorKey: "description",
-      header: "description",
+      accessorKey: "customer",
+      header: "Customer",
       cell: ({ row }) => (
-        <div>{row.getValue("description") || '-'}</div>
+        <div>{(row.getValue("customer") as any)?.name}</div>
       )
     },
     {
-      id: "actions",
-      enableHiding: false,
+      accessorKey: "order_status",
+      header: "Order Status",
       cell: ({ row }) => {
-        const item = row.original as GENRE;
+        const text = row.getValue("order_status") as string;
+        const status = text.toLowerCase();
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0" type="button">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onSelect={(e) => {
-                  e.preventDefault();
-                  handleEdit(item);
-                }}>
-                <Edit2 /> Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(item.id as string)}
-              > <Trash className="text-red-500" /> Delete </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <StatusTextWithCircle status={status} text={text} />
+        )
+      },
+    },
+    {
+      accessorKey: "payment_status",
+      header: "Payment Status",
+      cell: ({ row }) => {
+        const text = row.getValue("payment_status") as string;
+        const status = text.toLowerCase();
+        return (
+          <StatusTextWithCircle status={status} text={text} />
+        )
+      },
+    },
+    {
+      accessorKey: "order_items",
+      header: "Variations",
+      cell: ({ row }) => {
+        const variations = row.getValue('order_items') as PRODUCT_VARIATION[];
+        console.log(variations)
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-center cursor-pointer">{variations?.length}</div>
+              </TooltipTrigger>
+              <TooltipContent>
+                {/* Your tooltip content goes here */}
+                <div>
+                  {variations?.length > 0 ? (
+                    <ul>
+                      {variations?.map((v: any, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between py-2 border-b border-gray-200"
+                        >
+                          <div className="flex items-center space-x-3">
+                            {/* Color swatch and name */}
+                            <span
+                              className="inline-block w-4 h-4 rounded-full border border-gray-300"
+                              style={{ backgroundColor: v?.variation?.color_code ?? '' }}
+                            ></span>
+                            <span className="font-bold">{v?.variation?.color_name ?? ''}</span>
+
+                            {/* Size and SKU */}
+                            <span className="text-sm text-gray-600">
+                              <strong>Size:</strong> {v?.variation?.size ?? ''}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              <strong>SKU:</strong> {v?.variation?.sku}
+                            </span>
+                          </div>
+
+                          {/* Price and status are now grouped and centered vertically */}
+                          <div className="flex items-center space-x-2">
+                            <span className="font-bold">${v?.variation?.price}</span>
+
+                            {/* Use a container with a fixed width to prevent alignment shift 
+                            <span className="w-24 text-center">
+                              {v?.variation?.is_out_of_stock ? (
+                                <span className="text-red-500 font-bold">(Out of Stock)</span>
+                              ) : (
+                                <span className="text-green-500 font-bold">(In Stock)</span>
+                              )}
+                            </span>
+                            */}
+                          </div>
+                        </li>))}
+                    </ul>
+                  ) : (
+                    <p>No variations available</p>
+                  )}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         );
       },
     },
+    {
+      accessorKey: "createdAt",
+      header: "Ordered Time",
+      cell: ({ row }) => {
+        const orderedTime = row.getValue("createdAt") as any
+        const dateObject = new Date(orderedTime)
+        return (
+          <span>{dateObject.toLocaleString()}</span>
+        )
+      },
+    },
+    {
+      accessorKey: "new",
+      header: "",
+      cell: ({ row }) => {
+        const payment_status = row.getValue("payment_status");
+        const order_status = row.getValue("order_status");
+        const isNew = payment_status === "paid" && order_status === "pending"
+        return (
+          <>
+            {isNew && <span className="text-green-500">New</span>}
+          </>
+        )
+      },
+    },
+
   ];
 
   return (
@@ -149,7 +239,7 @@ export const OrderPage = () => {
             setEditedItem(null);
             form.reset();
             setOpen(true);
-          }}>
+          }} disabled>
             <Plus /> Add New
           </Button>
         }
@@ -164,6 +254,7 @@ export const OrderPage = () => {
         setOpen={setOpen}
         columns={columns}
         data={data?.data || []}
+        handleClick={handleClick}
       />
 
       <ConfirmDeleteDialog

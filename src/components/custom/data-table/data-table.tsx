@@ -32,12 +32,14 @@ import {
 
 interface DataTableProps {
   columns: ColumnDef<any>[]
-  data: any[]
+  data: any[],
+  handleClick?: (row: any) => void
 }
 
 export function DataTable({
   columns,
-  data
+  data,
+  handleClick = () => console.log('')
 }: DataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -71,9 +73,9 @@ export function DataTable({
       <div className="flex items-center py-4">
         <Input
           placeholder="Search..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          value={(table.getState().globalFilter as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
+            table.setGlobalFilter(event.target.value)
           }
           className="max-w-sm"
         />
@@ -130,6 +132,7 @@ export function DataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => handleClick(row?.original as any)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

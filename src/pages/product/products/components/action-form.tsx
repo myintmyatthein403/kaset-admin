@@ -28,6 +28,7 @@ type FormValues = {
     id: string;
     sku: string;
     price: number;
+    stock: number;
     color_code: string;
     color_name: string;
     size: string;

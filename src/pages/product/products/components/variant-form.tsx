@@ -6,6 +6,7 @@ interface VariantProps {
   sku: string;
   price: string;
   size: string;
+  stock: number;
   color_name: string;
   color_code: string;
   is_out_of_stock: boolean;
@@ -84,11 +85,11 @@ export const VariantForm = ({
         />
 
         <form.Field
-          name={`variants[${index}].is_out_of_stock`}
+          name={`variants[${index}].stock`}
           children={(field: any) => (
-            <SwitchField
+            <InputField
+              title="Stock (quantity)"
               field={field}
-              title="Out of Stock"
               className="w-full"
             />
           )}

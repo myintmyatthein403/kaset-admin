@@ -152,6 +152,7 @@ export type PRODUCT_VARIATION = BASE_TYPE & {
   sku: string;
   price: number;
   size: string;
+  stock: number;
   color_name: string;
   color_code: string;
   is_out_of_stock: boolean;
