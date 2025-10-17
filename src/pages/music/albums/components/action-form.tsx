@@ -66,6 +66,13 @@ export const AlbumForm = ({ form }: AlbumFormProps) => {
           <SlugField title="Slug" field={field} required handleGenerateSlug={handleGenerateSlug} isSpinning={isSpinning} />
         )}
       </form.Field>
+      <form.Field name="released_date">
+        {
+          (field: any) => (
+            <InputField field={field} title="Release Date" placeholder="YYYY-MM-DD" />
+          )
+        }
+      </form.Field>
       <form.Field name="coverImage">
         {(field: any) => (
           <FileUploader

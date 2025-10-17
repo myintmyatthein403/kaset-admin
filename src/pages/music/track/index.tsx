@@ -87,6 +87,7 @@ export const TrackPage = () => {
       form.setFieldValue('chord_text', trackData.chord_text);
       form.setFieldValue('chord_type', trackData.chord_type);
       form.setFieldValue('credit', trackData.credit)
+      form.setFieldValue('released_date', trackData.released_date)
       if (trackData.music_links && trackData.music_links.length > 0) {
         const formattedPairs = trackData.music_links.map((link: any) => ({
           id: link.id || nanoid(),
@@ -124,6 +125,7 @@ export const TrackPage = () => {
       chordImage: null,
       btsImages: [],
       storyboards: [],
+      released_date: '',
       pairs: [{ id: nanoid(), dropdownValue: '', textValue: '' }]
     },
     onSubmit: async ({ value }) => {

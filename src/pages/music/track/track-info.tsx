@@ -92,6 +92,13 @@ export const TrackInfo = ({ form }: { form: any }) => {
           )
         }
       </form.Field>
+      <form.Field name="released_date">
+        {
+          (field: any) => (
+            <InputField field={field} title="Release Date" placeholder="YYYY-MM-DD" />
+          )
+        }
+      </form.Field>
 
       <form.Field name="genres">
         {

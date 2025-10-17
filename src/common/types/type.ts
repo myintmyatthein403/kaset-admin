@@ -68,6 +68,7 @@ export type ALBUM = BASE_TYPE & {
   name: string;
   description?: string;
   slug: string;
+  released_date?: string;
   cover: MEDIA;
   coverImage: MEDIA;
   artists: {

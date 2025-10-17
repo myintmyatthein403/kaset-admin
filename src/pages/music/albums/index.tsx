@@ -48,6 +48,7 @@ export const AlbumPage = () => {
       artists: [],
       tracks: [],
       coverImage: null,
+      released_date: '',
     },
     onSubmit: async ({ value }) => {
       try {
@@ -101,6 +102,7 @@ export const AlbumPage = () => {
     form.setFieldValue("name", item.name);
     form.setFieldValue("description", item.description);
     form.setFieldValue("slug", item.slug);
+    form.setFieldValue("released_date", item.released_date);
     form.setFieldValue("tracks", item.tracks.map(track => track.id))
     form.setFieldValue("artists", item.artists.map(artist => artist.id))
   }

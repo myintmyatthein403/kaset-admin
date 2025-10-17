@@ -31,7 +31,7 @@ export const TrackImageForm = ({ form }: TrackImageFormProps) => {
         )}
       </form.Field>
 
-      {/* BTS Images Field (Multi-Select) */}
+      {/* BTS Images Field (Multi-Select) 
       <form.Field name="btsImages">
         {(field: any) => (
           <FileUploader
@@ -44,7 +44,7 @@ export const TrackImageForm = ({ form }: TrackImageFormProps) => {
         )}
       </form.Field>
 
-      {/* Storyboards Field (Multi-Select) */}
+      {/* Storyboards Field (Multi-Select) 
       <form.Field name="storyboards">
         {(field: any) => (
           <FileUploader
@@ -55,7 +55,7 @@ export const TrackImageForm = ({ form }: TrackImageFormProps) => {
             setFiles={field.handleChange}
           />
         )}
-      </form.Field>
+      </form.Field>*/}
     </div>
   );
 };
