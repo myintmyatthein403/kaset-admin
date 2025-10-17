@@ -54,6 +54,10 @@ export const useBaseHook = <T>(name: string, url: string) => {
     queryFn: () => fetchData(url),
   });
 
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: [name] });
+  }
+
   const createMutation = useMutation<any, Error, T>({
     mutationFn: (payload) => createItem(url, payload),
     onSuccess: () => {
@@ -108,6 +112,7 @@ export const useBaseHook = <T>(name: string, url: string) => {
     data: data?.data,
     isPending,
     error,
+    refresh,
     createMutation,
     updateMutation,
     deleteMutation,

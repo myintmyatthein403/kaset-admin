@@ -1,18 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useBaseHook } from "@/hooks/base.hook";
-import { DetailCard } from "./component/detail-card";
-import { DetailCardTitle } from "./component/detail-card-title";
 import { ShippingAddressCard } from "./component/shipping-address";
 import { PaymentCard } from "./component/payment";
 import { TotalPaymentCard } from "./component/total-payment";
 import { OrderProcessTimeline } from "./component/order-process";
 import { DataTable } from "@/components/custom/data-table/data-table";
-import type { ColumnDef } from "@tanstack/react-table";
 import type { MEDIA } from "@/common/types/type";
 import { config } from "@/common/config/config";
-import { PaymentProcessTimeline } from "./component/payment-process";
 import { formatISOTimestamp } from "@/common/utils/time.util";
+import { useNavigate } from "@tanstack/react-router";
+import { ChangeOrderStatus } from "./component/change-order-status";
 
 interface OrderDetailProps {
   orderId: string;
@@ -21,11 +19,12 @@ interface OrderDetailProps {
 export const OrderDetail = ({
   orderId
 }: OrderDetailProps) => {
+  const navigate = useNavigate()
   const {
     data,
     isPending,
     error
-  } = useBaseHook('orders', `/order/${orderId}`);
+  } = useBaseHook(`order-${orderId}`, `/order/${orderId}`);
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to fetch...</h1>
@@ -73,7 +72,7 @@ export const OrderDetail = ({
       accessorKey: "total_price",
       header: "Total Price",
       cell: ({ row }: { row: any }) => (
-        <span>฿ {Number(row.original.price_at_order) * Number(row.original.quantity)}</span>
+        <span>฿ {Number(row?.original?.price_at_order) * Number(row?.original?.quantity)}</span>
       )
     },
   ];
@@ -88,18 +87,21 @@ export const OrderDetail = ({
       <Card>
         <CardHeader>
           <CardTitle>
-            <div className="flex gap-6 items-center">
-              <h3 className="text-xl">Order #{orderId}</h3>
-              <h4 className="text-md text-gray-500">{formatISOTimestamp(data?.createdAt)}</h4>
-              <h4 className="text-md text-gray-500">{data?.order_items?.length} products</h4>
+            <div className="flex justify-between items-center">
+              <div className="flex gap-6 items-center">
+                <h3 className="text-xl">Order #{orderId}</h3>
+                <h4 className="text-md text-gray-500">{formatISOTimestamp(data?.createdAt)}</h4>
+                <h4 className="text-md text-gray-500">{data?.order_items?.length} products</h4>
+              </div>
+              <span onClick={() => navigate({ to: '/product/orders' })} className="cursor-pointer text-blue-500 underline link link-hover ">Go back to list</span>
             </div>
           </CardTitle>
         </CardHeader>
         <Separator />
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="grid gap-4 col-span-3">
+          <div className="grid grid-cols-6 gap-4">
+            <div className="grid gap-4 col-span-5">
               <div className="grid grid-cols-3 gap-4">
                 <ShippingAddressCard data={{ ...data?.shipping_address, name: data?.customer?.name, email: data?.customer?.email }} />
                 <TotalPaymentCard sub_total={data?.total_amount} />
@@ -113,8 +115,8 @@ export const OrderDetail = ({
               <OrderProcessTimeline status={data?.order_status} />
               <DataTable columns={columns} data={data?.order_items} />
             </div>
-            <div className="p-4 md:p-6 bg-background border rounded-lg">
-              <PaymentProcessTimeline />
+            <div>
+              <ChangeOrderStatus orderId={orderId} status={data?.order_status} />
             </div>
           </div>
         </CardContent>
