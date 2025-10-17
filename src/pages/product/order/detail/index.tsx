@@ -108,7 +108,7 @@ export const OrderDetail = ({
                 <PaymentCard info={{
                   method: data?.payment_method,
                   status: data?.payment_status,
-                  transactionId: data?.dinger_transaction_id ? data?.dinger_transaction_id : "pi_3SJ85bF2kSFUfxOu19wHq4m2",
+                  transactionId: data?.dinger_transaction_id ? data?.dinger_transaction_id : data?.stripe_transaction_id,
                   date: data?.createdAt,
                 }} />
               </div>

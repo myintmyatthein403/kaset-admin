@@ -1,6 +1,7 @@
 import { formatISOTimestamp } from "@/common/utils/time.util";
 import { DetailCard } from "./detail-card"
 import { DetailCardTitle } from "./detail-card-title"
+import { Copy } from "lucide-react";
 
 interface PaymentCardProps {
   info: {
@@ -29,7 +30,17 @@ export const PaymentCard = ({
         </div>
         <div className="flex justify-between">
           <span className="text-sm text-gray-500">Transaction ID</span>
-          <span className="text-sm font-medium">#{info.transactionId}</span>
+          <div
+            onClick={() => navigator.clipboard.writeText(info.transactionId)}
+            className="inline-flex items-center space-x-1 cursor-pointer text-sm font-medium hover:text-blue-600 transition-colors group"
+            aria-label={`Copy transaction ID ${info.transactionId}`}
+          >
+            <span className="text-gray-800 dark:text-white">
+              {info.transactionId}
+            </span>
+            {/* The icon, often slightly muted */}
+            <Copy className="h-3.5 w-3.5 text-muted-foreground group-hover:text-blue-600 transition-colors" />
+          </div>
         </div>
         <div className="flex justify-between">
           <span className="text-sm text-gray-500">Payment Status</span>

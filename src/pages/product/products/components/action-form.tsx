@@ -2,7 +2,7 @@ import type { PRODUCT } from "@/common/types/type";
 import { generateSlug } from "@/common/utils/slug.util";
 import { Combobox } from "@/components/custom/input/combobox";
 import { FileUploader } from "@/components/custom/input/file-uploader";
-import { DescriptionField, InputField, SlugField, SwitchField } from "@/components/custom/input/input-field";
+import { DescriptionField, InputField, SlugField } from "@/components/custom/input/input-field";
 import { Button } from "@/components/ui/button";
 import { useBaseHook } from "@/hooks/base.hook";
 import { useForm } from "@tanstack/react-form";
@@ -91,11 +91,6 @@ export const ProductForm = ({
         <form.Field name="base_price">
           {(field) => (
             <InputField title="Price" field={field} required />
-          )}
-        </form.Field>
-        <form.Field name="is_out_of_stock">
-          {(field) => (
-            <SwitchField field={field} title="Out of Stock" />
           )}
         </form.Field>
       </div>

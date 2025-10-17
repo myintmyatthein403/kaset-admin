@@ -81,8 +81,11 @@ function getCalculatedSteps(currentOrderStatus: ORDER_STATUS): CalculatedTimelin
       // Steps before the current one are completed
       timelineStatus = "completed";
     } else if (index === currentStatusIndex) {
-      // The current step is in-progress
-      timelineStatus = "in-progress";
+      if (currentOrderStatus == ORDER_STATUS.DELIVERED) {
+        timelineStatus = "completed"
+      } else {
+        timelineStatus = "in-progress";
+      }
     } else {
       // Steps after the current one are pending
       timelineStatus = "pending";

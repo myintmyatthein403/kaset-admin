@@ -145,7 +145,7 @@ export type PRODUCT = BASE_TYPE & {
   product_category: PRODUCT_CATEGORY;
   productImages: MEDIA[];
   product_images: MEDIA[];
-  variations: PRODUCT_VARIATION;
+  variations: PRODUCT_VARIATION[];
 }
 
 export type PRODUCT_VARIATION = BASE_TYPE & {

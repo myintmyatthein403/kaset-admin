@@ -12,7 +12,6 @@ import { useState } from "react"
 import { toast } from "sonner";
 import type { MEDIA, PRODUCT, PRODUCT_VARIATION } from "@/common/types/type";
 import { ProductForm } from "./components/action-form";
-import { useUploadSingleFile } from "@/hooks/use-upload-file.hook";
 import { config } from "@/common/config/config";
 import type { productSchemaType } from "@/common/schemas/product.schema";
 import { StatusTextWithCircle } from "@/components/custom/typography/typography";
@@ -180,8 +179,11 @@ export const ProductPage = () => {
       accessorKey: "is_out_of_stock",
       header: "Stock",
       cell: ({ row }) => {
-        const status = row.getValue('is_out_of_stock') ? 'failed' : 'success'
-        const text = row.getValue('is_out_of_stock') ? 'Out of Stock' : 'In Stock'
+        const stock = row.original.variations.reduce((acc: any, cur: any) => acc + cur.stock, 0)
+
+        const status = stock == 0 ? 'failed' : 'success'
+        const text = stock == 0 ? 'Out of Stock' : 'In Stock'
+
         return (
           <StatusTextWithCircle status={status} text={text} />
         )
