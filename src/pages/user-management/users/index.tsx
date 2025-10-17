@@ -11,10 +11,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import { RoleForm } from "./components/action-form";
 import type { RoleSchemaType } from "@/common/schemas/role.schema";
+import { RoleForm } from "../roles/components/action-form";
 
-export const RolePage = () => {
+export const UserPage = () => {
   const {
     data,
     isPending,
@@ -135,7 +135,7 @@ export const RolePage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Roles"
+        title="Users"
         actionButton={
           <Button variant='outline' type="button" onClick={() => {
             setEditedItem(null);
@@ -165,7 +165,7 @@ export const RolePage = () => {
       />
 
       <ActionSheet
-        title="Edit Role"
+        title="Edit User"
         description=""
         updateForm={<RoleForm form={form} />}
         onFormSubmit={(e) => {

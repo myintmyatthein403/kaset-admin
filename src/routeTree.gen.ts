@@ -15,6 +15,7 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthSlideShowRouteImport } from './routes/_auth/slide-show'
 import { Route as AuthSettingIndexRouteImport } from './routes/_auth/setting/index'
+import { Route as AuthUserManagementUserRouteImport } from './routes/_auth/user-management/user'
 import { Route as AuthUserManagementRolesRouteImport } from './routes/_auth/user-management/roles'
 import { Route as AuthUserManagementArtistRouteImport } from './routes/_auth/user-management/artist'
 import { Route as AuthSettingSocialLinkRouteImport } from './routes/_auth/setting/social-link'
@@ -66,6 +67,11 @@ const AuthSlideShowRoute = AuthSlideShowRouteImport.update({
 const AuthSettingIndexRoute = AuthSettingIndexRouteImport.update({
   id: '/setting/',
   path: '/setting/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthUserManagementUserRoute = AuthUserManagementUserRouteImport.update({
+  id: '/user-management/user',
+  path: '/user-management/user',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthUserManagementRolesRoute = AuthUserManagementRolesRouteImport.update({
@@ -218,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/setting/social-link': typeof AuthSettingSocialLinkRoute
   '/user-management/artist': typeof AuthUserManagementArtistRoute
   '/user-management/roles': typeof AuthUserManagementRolesRoute
+  '/user-management/user': typeof AuthUserManagementUserRoute
   '/setting': typeof AuthSettingIndexRoute
   '/product/orders/$orderId': typeof AuthProductOrdersOrderIdRoute
   '/product/orders': typeof AuthProductOrdersIndexRoute
@@ -248,6 +255,7 @@ export interface FileRoutesByTo {
   '/setting/social-link': typeof AuthSettingSocialLinkRoute
   '/user-management/artist': typeof AuthUserManagementArtistRoute
   '/user-management/roles': typeof AuthUserManagementRolesRoute
+  '/user-management/user': typeof AuthUserManagementUserRoute
   '/setting': typeof AuthSettingIndexRoute
   '/product/orders/$orderId': typeof AuthProductOrdersOrderIdRoute
   '/product/orders': typeof AuthProductOrdersIndexRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/_auth/setting/social-link': typeof AuthSettingSocialLinkRoute
   '/_auth/user-management/artist': typeof AuthUserManagementArtistRoute
   '/_auth/user-management/roles': typeof AuthUserManagementRolesRoute
+  '/_auth/user-management/user': typeof AuthUserManagementUserRoute
   '/_auth/setting/': typeof AuthSettingIndexRoute
   '/_auth/product/orders/$orderId': typeof AuthProductOrdersOrderIdRoute
   '/_auth/product/orders/': typeof AuthProductOrdersIndexRoute
@@ -312,6 +321,7 @@ export interface FileRouteTypes {
     | '/setting/social-link'
     | '/user-management/artist'
     | '/user-management/roles'
+    | '/user-management/user'
     | '/setting'
     | '/product/orders/$orderId'
     | '/product/orders'
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/setting/social-link'
     | '/user-management/artist'
     | '/user-management/roles'
+    | '/user-management/user'
     | '/setting'
     | '/product/orders/$orderId'
     | '/product/orders'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/_auth/setting/social-link'
     | '/_auth/user-management/artist'
     | '/_auth/user-management/roles'
+    | '/_auth/user-management/user'
     | '/_auth/setting/'
     | '/_auth/product/orders/$orderId'
     | '/_auth/product/orders/'
@@ -426,6 +438,13 @@ declare module '@tanstack/react-router' {
       path: '/setting'
       fullPath: '/setting'
       preLoaderRoute: typeof AuthSettingIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/user-management/user': {
+      id: '/_auth/user-management/user'
+      path: '/user-management/user'
+      fullPath: '/user-management/user'
+      preLoaderRoute: typeof AuthUserManagementUserRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/user-management/roles': {
@@ -616,6 +635,7 @@ interface AuthRouteChildren {
   AuthSettingSocialLinkRoute: typeof AuthSettingSocialLinkRoute
   AuthUserManagementArtistRoute: typeof AuthUserManagementArtistRoute
   AuthUserManagementRolesRoute: typeof AuthUserManagementRolesRoute
+  AuthUserManagementUserRoute: typeof AuthUserManagementUserRoute
   AuthSettingIndexRoute: typeof AuthSettingIndexRoute
   AuthProductOrdersOrderIdRoute: typeof AuthProductOrdersOrderIdRoute
   AuthProductOrdersIndexRoute: typeof AuthProductOrdersIndexRoute
@@ -646,6 +666,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthSettingSocialLinkRoute: AuthSettingSocialLinkRoute,
   AuthUserManagementArtistRoute: AuthUserManagementArtistRoute,
   AuthUserManagementRolesRoute: AuthUserManagementRolesRoute,
+  AuthUserManagementUserRoute: AuthUserManagementUserRoute,
   AuthSettingIndexRoute: AuthSettingIndexRoute,
   AuthProductOrdersOrderIdRoute: AuthProductOrdersOrderIdRoute,
   AuthProductOrdersIndexRoute: AuthProductOrdersIndexRoute,

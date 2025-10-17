@@ -27,6 +27,7 @@ import {
   Sparkles,
   Headphones
 } from "lucide-react";
+import { title } from "process";
 
 export const sidebarGroups = [
   {
@@ -136,6 +137,11 @@ export const sidebarGroups = [
         title: "Roles",
         url: "/user-management/roles",
         icon: Shield
+      },
+      {
+        title: "Users",
+        url: "/user-management/user",
+        icon: User,
       }
     ],
   },
