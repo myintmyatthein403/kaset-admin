@@ -22,7 +22,7 @@ export const UserPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<RoleSchemaType>('roles', '/roles')
+  } = useBaseHook<RoleSchemaType>('users', '/users')
 
   const [open, setOpen] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<ROLE | null>(null);
@@ -41,8 +41,9 @@ export const UserPage = () => {
 
   const form = useForm({
     defaultValues: {
+      email: "",
       name: "",
-      description: ""
+      status: ""
     },
     onSubmit: async ({ value }) => {
       try {
@@ -99,6 +100,13 @@ export const UserPage = () => {
       header: "Name",
       cell: ({ row }) => (
         <div>{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => (
+        <div>{row.getValue("email")}</div>
       ),
     },
     {
