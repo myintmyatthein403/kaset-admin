@@ -1,4 +1,4 @@
-import { type ROLE } from "@/common/types/type";
+import { type USER } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -13,6 +13,9 @@ import { useState } from "react"
 import { toast } from "sonner";
 import type { RoleSchemaType } from "@/common/schemas/role.schema";
 import { RoleForm } from "../roles/components/action-form";
+import { UserForm } from "./component/action-form";
+import { StatusTextWithCircle } from "@/components/custom/typography/typography";
+import { ACCOUNT_STATUS } from "@/common/enums";
 
 export const UserPage = () => {
   const {
@@ -22,10 +25,10 @@ export const UserPage = () => {
     createMutation,
     updateMutation,
     deleteMutation
-  } = useBaseHook<RoleSchemaType>('users', '/users')
+  } = useBaseHook('users', '/users')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<ROLE | null>(null);
+  const [editedItem, setEditedItem] = useState<USER | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -43,7 +46,10 @@ export const UserPage = () => {
     defaultValues: {
       email: "",
       name: "",
-      status: ""
+      status: "",
+      banned_reason: "",
+      claimable: "",
+      role: "",
     },
     onSubmit: async ({ value }) => {
       try {
@@ -63,16 +69,21 @@ export const UserPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: ROLE) => {
+  const handleEdit = (item: USER) => {
     setEditedItem(item);
     form.setFieldValue("name", item.name);
+    form.setFieldValue("email", item.email);
+    form.setFieldValue("status", item.status);
+    form.setFieldValue("banned_reason", item.banned_reason);
+    form.setFieldValue("claimable", item.claimable);
+    form.setFieldValue("role", item.role.id)
   }
 
 
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<ROLE>[] = [
+  const columns: ColumnDef<USER>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -110,10 +121,28 @@ export const UserPage = () => {
       ),
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue('status') == ACCOUNT_STATUS.ACTIVE ? "success" : "failed";
+        const text = row.getValue('status') as string
+        return <StatusTextWithCircle status={status} text={text} />
+      }
+    },
+    {
+      accessorKey: "claimable",
+      header: "Claimable",
+      cell: ({ row }) => {
+        const status = row.getValue('claimable') ? "success" : "failed";
+        const text = row.getValue('claimable') ? "Yes" : "No";
+        return <StatusTextWithCircle status={status} text={text} />
+      },
+    },
+    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as ROLE;
+        const item = row.original as USER;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -145,17 +174,11 @@ export const UserPage = () => {
       <BaseContentLayout
         title="Users"
         actionButton={
-          <Button variant='outline' type="button" onClick={() => {
-            setEditedItem(null);
-            form.reset();
-            setOpen(true);
-          }}>
-            <Plus /> Add New
-          </Button>
+          <></>
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<RoleForm form={form} />}
+        createForm={< RoleForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -166,7 +189,7 @@ export const UserPage = () => {
         data={data?.data || []}
       />
 
-      <ConfirmDeleteDialog
+      < ConfirmDeleteDialog
         isDeleteDialogOpen={isDeleteDialogOpen}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         confirmDelete={handleConfirmDelete}
@@ -175,7 +198,7 @@ export const UserPage = () => {
       <ActionSheet
         title="Edit User"
         description=""
-        updateForm={<RoleForm form={form} />}
+        updateForm={<UserForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

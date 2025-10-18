@@ -112,6 +112,15 @@ export type ROLE = BASE_TYPE & {
   name: string;
 }
 
+export type USER = BASE_TYPE & {
+  email: string;
+  status: string;
+  name: string;
+  banned_reason?: string;
+  claimable: boolean;
+  role: ROLE;
+}
+
 export type PLATFORM = BASE_TYPE & {
   name: string;
   icon: MEDIA;
