@@ -17,7 +17,7 @@ const createItem = async (url: string, newData: any) => {
 }
 
 const updateItem = async (url: string, updatedData: any) => {
-  return fetcher(`${url}/${updatedData.id}`, {
+  return fetcher(`${url}`, {
     method: "PATCH",
     data: updatedData,
     headers: {
@@ -72,7 +72,7 @@ export const useBaseHook = <T>(name: string, url: string) => {
 
   // The updateMutation now accepts a payload of type 'T'.
   const updateMutation = useMutation<any, Error, T>({
-    mutationFn: (payload) => updateItem(url, payload),
+    mutationFn: (payload: any) => updateItem(`${url}/${payload.id}`, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [name] });
       toast.success(`${name} updated successfully.`)
@@ -80,6 +80,18 @@ export const useBaseHook = <T>(name: string, url: string) => {
     onError: (err) => {
       console.error(`Error updating ${name}:`, err);
       toast.error(`Failed to update ${name}.`)
+    }
+  })
+
+  const updateStatusMutation = useMutation<any, Error, T>({
+    mutationFn: (payload: any) => updateItem(`${url}/status/${payload?.id}`, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [name] });
+      toast.success(`${name}'s status updated successfully.`)
+    },
+    onError: (err) => {
+      console.error(`Error updating status of ${name}:`, err);
+      toast.error(`Failed to update status of ${name}.`)
     }
   })
 
@@ -115,6 +127,7 @@ export const useBaseHook = <T>(name: string, url: string) => {
     refresh,
     createMutation,
     updateMutation,
+    updateStatusMutation,
     deleteMutation,
     softDeleteMutation,
     uploadMutation,

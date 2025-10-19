@@ -1,5 +1,4 @@
 import { type USER_PROFILE } from "@/common/types/type";
-import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
 import { Button } from "@/components/ui/button";
@@ -8,12 +7,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useBaseHook } from "@/hooks/base.hook"
 import { useForm } from "@tanstack/react-form";
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
+import { MoreHorizontal, Edit2, Plus, Ban, CheckCircle } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
 import { ArtistForm } from "./components/action-form";
-import type { ArtistSchemaType } from "@/common/schemas/artist.schema";
 import { nanoid } from "nanoid";
+import { ACCOUNT_STATUS } from "@/common/enums";
+import { StatusTextWithCircle } from "@/components/custom/typography/typography";
 
 export const ArtistPage = () => {
 
@@ -21,7 +21,10 @@ export const ArtistPage = () => {
     data,
     isPending,
     error,
-    deleteMutation,
+    refresh
+  } = useBaseHook('artist-data', '/artist?name=admin')
+  const {
+    updateStatusMutation,
     uploadMutation,
     updateMutation: updateArtistMutation,
     createMutation: createArtistMutation
@@ -29,17 +32,12 @@ export const ArtistPage = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<USER_PROFILE | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
-  const [selectedItemId, setSelectedItemId] = useState<string>("");
 
-  const handleDelete = (id: string) => {
-    setIsDeleteDialogOpen(true);
-    setSelectedItemId(id);
-  }
+  const handleConfirmDelete = async (status: ACCOUNT_STATUS, id: string) => {
+    await updateStatusMutation.mutateAsync({ status, id })
+    refresh()
+    // setIsDeleteDialogOpen(false);
 
-  const handleConfirmDelete = () => {
-    deleteMutation.mutate(selectedItemId);
-    setIsDeleteDialogOpen(false);
   }
 
   type FormValues = {
@@ -83,9 +81,11 @@ export const ArtistPage = () => {
         }
         if (editedItem) {
           await updateArtistMutation.mutateAsync({ ...finalPayload, id: editedItem.id });
+          refresh()
           setEditedItem(null);
         } else {
           await createArtistMutation.mutateAsync(finalPayload)
+          refresh()
 
         }
         setOpen(false);
@@ -168,6 +168,15 @@ export const ArtistPage = () => {
       )
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") == ACCOUNT_STATUS.ACTIVE ? "success" : "failed";
+        const text = row.getValue("status") == ACCOUNT_STATUS.ACTIVE ? "Active" : "Inactive"
+        return <StatusTextWithCircle status={status} text={text} />
+      }
+    },
+    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
@@ -189,8 +198,17 @@ export const ArtistPage = () => {
                 <Edit2 /> Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleDelete(item.id as string)}
-              > <Trash className="text-red-500" /> Delete </DropdownMenuItem>
+                onClick={() => handleConfirmDelete(
+                  item.status === ACCOUNT_STATUS.ACTIVE ? ACCOUNT_STATUS.DEACTIVATED_BY_ADMIN : ACCOUNT_STATUS.ACTIVE,
+                  item.userId as string
+                )}
+              >
+                {
+                  item.status === ACCOUNT_STATUS.ACTIVE ?
+                    (<><Ban className="text-red-500" /> Inactive</>) :
+                    (<><CheckCircle className="text-green-500" /> Active</>)
+                }
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -224,11 +242,6 @@ export const ArtistPage = () => {
         data={data || []}
       />
 
-      <ConfirmDeleteDialog
-        isDeleteDialogOpen={isDeleteDialogOpen}
-        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
-        confirmDelete={handleConfirmDelete}
-      />
 
       <ActionSheet
         title="Edit Artist"

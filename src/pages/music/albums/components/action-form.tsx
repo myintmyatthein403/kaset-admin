@@ -73,7 +73,7 @@ export const AlbumForm = ({ form }: AlbumFormProps) => {
           )
         }
       </form.Field>
-      <form.Field name="coverImage">
+      <form.Field name="albumCoverImage">
         {(field: any) => (
           <FileUploader
             fieldName={field.name}

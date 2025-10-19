@@ -1,3 +1,5 @@
+import type { ACCOUNT_STATUS } from "../enums";
+
 export type BASE_TYPE = {
   id?: string;
   createdAt?: string;
@@ -101,6 +103,8 @@ export type USER_PROFILE = BASE_TYPE & {
   slug: string;
   featured_video?: string;
   social_media_links?: SOCIAL_MEDIA_LINK[];
+  status: ACCOUNT_STATUS;
+  userId: string;
 }
 
 export type SOCIAL_MEDIA_LINK = BASE_TYPE & {

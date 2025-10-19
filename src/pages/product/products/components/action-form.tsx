@@ -98,7 +98,7 @@ export const ProductForm = ({
         {(field) => (
           <FileUploader
             fieldName={field.name}
-            title="Track Image"
+            title="Product Images"
             files={field.state.value as File[] || []}
             setFiles={field.handleChange}
             isMultiSelect

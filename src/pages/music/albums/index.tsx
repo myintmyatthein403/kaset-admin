@@ -47,7 +47,7 @@ export const AlbumPage = () => {
       slug: "",
       artists: [],
       tracks: [],
-      coverImage: null,
+      albumCoverImage: null,
       released_date: '',
     },
     onSubmit: async ({ value }) => {
@@ -55,13 +55,13 @@ export const AlbumPage = () => {
         const {
           artists,
           tracks,
-          coverImage,
+          albumCoverImage,
           ...restValue
         } = value;
         let imageId = editedItem?.cover?.id || "";
 
-        if (value?.coverImage) {
-          const uploadImage = await uploadMutation.mutateAsync(value.coverImage);
+        if (value?.albumCoverImage) {
+          const uploadImage = await uploadMutation.mutateAsync(value.albumCoverImage);
           imageId = uploadImage.id;
         }
         let artistIds;

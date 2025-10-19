@@ -62,6 +62,21 @@ export const FileUploader = ({
     }
   };
 
+  const showText = () => {
+    const originalRequestedSize = "~ 2MB"
+    switch (fieldName.toLowerCase()) {
+      case 'productimages':
+      case 'trackcoverimage':
+      case 'trackimage':
+      case 'profileimage':
+      case 'albumcoverimage':
+        return `(Recommended: 1:1 ratio, Max File Size: ${originalRequestedSize})`;
+      case 'coverimage':
+        return `(Recommended: 16:9 ratio, Max File Size: ${originalRequestedSize})`;
+      default:
+        return `(Max File Size: ${originalRequestedSize})`;
+    }
+  }
   return (
     <>
       <Label htmlFor={fieldName}>
@@ -113,7 +128,7 @@ export const FileUploader = ({
                 <p className="text-sm text-gray-500">
                   {isMultiSelect ? 'Drag and drop images here or click to select' : 'Drag and drop an image here or click to select'}
                 </p>
-                <p className="text-xs text-gray-400">(Only image files are allowed)</p>
+                <p className="text-xs text-gray-400">{showText()} (Only image files are allowed)</p>
               </>
             )}
           </label>
