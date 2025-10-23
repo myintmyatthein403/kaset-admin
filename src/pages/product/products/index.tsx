@@ -73,8 +73,8 @@ export const ProductPage = () => {
           ...restValues,
           ...(variants && variants.length > 0 && {
             variations: variants.map((v: any) => {
-              const { id, ...rest } = v;
-              return rest
+              
+              return v
             })
           }),
           ...(productImageIds && productImageIds.length > 0 && { product_images: productImageIds })
