@@ -130,6 +130,10 @@ export type PLATFORM = BASE_TYPE & {
   icon: MEDIA;
 }
 
+export type CREDIT_KEY = BASE_TYPE & {
+  name: string;
+}
+
 export type SOCIAL_LINK = BASE_TYPE & {
   facebook_url?: string;
   twitter_url?: string;

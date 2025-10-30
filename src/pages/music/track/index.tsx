@@ -98,6 +98,17 @@ export const TrackPage = () => {
       } else {
         form.setFieldValue("pairs", [{ id: nanoid(), dropdownValue: '', textValue: '' }]);
       }
+      if (trackData.credit_values && trackData.credit_values.length > 0) {
+        const formattedPairs = trackData.credit_values.map((link: any) => ({
+          id: link.id || nanoid(),
+          dropdownValue: link.credit_key.id,
+          textValue: link.value,
+        }));
+        form.setFieldValue("credit_pairs", formattedPairs);
+      } else {
+        form.setFieldValue("credit_pairs", [{ id: nanoid(), dropdownValue: '', textValue: '' }]);
+      }
+      console.log(form.getFieldValue('credit_pairs'));
       toast.dismiss('fetch-track');
     } catch (error) {
       toast.dismiss('fetch-track');
@@ -126,7 +137,8 @@ export const TrackPage = () => {
       btsImages: [],
       storyboards: [],
       released_date: '',
-      pairs: [{ id: nanoid(), dropdownValue: '', textValue: '' }]
+      pairs: [{ id: nanoid(), dropdownValue: '', textValue: '' }],
+      credit_pairs: [{ id: nanoid(), dropdownValue: '', textValue: '' }]
     },
     onSubmit: async ({ value }) => {
       try {
@@ -138,6 +150,7 @@ export const TrackPage = () => {
           btsImages,
           storyboards,
           pairs,
+          credit_pairs,
           artists,
           genres,
           ...restOfValue
@@ -149,6 +162,7 @@ export const TrackPage = () => {
         let lyricImageId;
         let chordImageId;
         let socialMediaLinkIds;
+        let creditValueIds;
         let artistIds;
         let genreIds;
 
@@ -213,7 +227,6 @@ export const TrackPage = () => {
         if (value.chordImage) {
           chordImageId = await uploadFile(value.chordImage);
         }
-        console.log('btsImages', btsImagesIds)
 
         if (value.pairs && value.pairs.length > 0) {
           const socialMediaLinks = await Promise.all(value.pairs.map(async (pair: any) => {
@@ -237,6 +250,30 @@ export const TrackPage = () => {
           }
         }
 
+
+        if (value.credit_pairs && value.credit_pairs.length > 0) {
+          const socialMediaLinks = await Promise.all(value.credit_pairs.map(async (pair: any) => {
+            const response = await fetcher('/credit-values', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${await tokenService.getAccessToken()} `
+              },
+              data: {
+                credit_key: {
+                  id: pair.dropdownValue
+                },
+                value: pair.textValue
+              }
+            });
+            return response?.data.id;
+          }));
+
+          if (socialMediaLinks && socialMediaLinks.length > 0) {
+            creditValueIds = socialMediaLinks.map((id: any) => ({ id: id }))
+          }
+        }
+        console.log('...', creditValueIds)
+
         const finalPayload = {
           ...restOfValue,
           ...(trackImageId && { track_image: { id: trackImageId } }),
@@ -246,6 +283,7 @@ export const TrackPage = () => {
           ...(lyricImageId && { lyric_image: lyricImageId }),
           ...(chordImageId && { chord_image: chordImageId }),
           ...(socialMediaLinkIds && socialMediaLinkIds.length > 0 && { music_links: socialMediaLinkIds }),
+          ...(creditValueIds && creditValueIds.length > 0 && { credit_values: creditValueIds }),
           ...(artistIds && artistIds.length > 0 && { artists: artistIds }),
           ...(genreIds && genreIds.length > 0 && { genres: genreIds })
         };

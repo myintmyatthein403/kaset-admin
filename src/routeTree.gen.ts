@@ -24,6 +24,7 @@ import { Route as AuthSettingLogoRouteImport } from './routes/_auth/setting/logo
 import { Route as AuthSettingHomePageSlideShowRouteImport } from './routes/_auth/setting/home-page-slide-show'
 import { Route as AuthSettingFaqRouteImport } from './routes/_auth/setting/faq'
 import { Route as AuthSettingExchangeRateRouteImport } from './routes/_auth/setting/exchange-rate'
+import { Route as AuthSettingCreditKeysRouteImport } from './routes/_auth/setting/credit-keys'
 import { Route as AuthSettingApiTokenRouteImport } from './routes/_auth/setting/api-token'
 import { Route as AuthProductProductsRouteImport } from './routes/_auth/product/products'
 import { Route as AuthProductProductCategoriesRouteImport } from './routes/_auth/product/product-categories'
@@ -114,6 +115,11 @@ const AuthSettingFaqRoute = AuthSettingFaqRouteImport.update({
 const AuthSettingExchangeRateRoute = AuthSettingExchangeRateRouteImport.update({
   id: '/setting/exchange-rate',
   path: '/setting/exchange-rate',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSettingCreditKeysRoute = AuthSettingCreditKeysRouteImport.update({
+  id: '/setting/credit-keys',
+  path: '/setting/credit-keys',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthSettingApiTokenRoute = AuthSettingApiTokenRouteImport.update({
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/product/products': typeof AuthProductProductsRoute
   '/setting/api-token': typeof AuthSettingApiTokenRoute
+  '/setting/credit-keys': typeof AuthSettingCreditKeysRoute
   '/setting/exchange-rate': typeof AuthSettingExchangeRateRoute
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/product/products': typeof AuthProductProductsRoute
   '/setting/api-token': typeof AuthSettingApiTokenRoute
+  '/setting/credit-keys': typeof AuthSettingCreditKeysRoute
   '/setting/exchange-rate': typeof AuthSettingExchangeRateRoute
   '/setting/faq': typeof AuthSettingFaqRoute
   '/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/_auth/product/product-categories': typeof AuthProductProductCategoriesRoute
   '/_auth/product/products': typeof AuthProductProductsRoute
   '/_auth/setting/api-token': typeof AuthSettingApiTokenRoute
+  '/_auth/setting/credit-keys': typeof AuthSettingCreditKeysRoute
   '/_auth/setting/exchange-rate': typeof AuthSettingExchangeRateRoute
   '/_auth/setting/faq': typeof AuthSettingFaqRoute
   '/_auth/setting/home-page-slide-show': typeof AuthSettingHomePageSlideShowRoute
@@ -313,6 +322,7 @@ export interface FileRouteTypes {
     | '/product/product-categories'
     | '/product/products'
     | '/setting/api-token'
+    | '/setting/credit-keys'
     | '/setting/exchange-rate'
     | '/setting/faq'
     | '/setting/home-page-slide-show'
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/product/product-categories'
     | '/product/products'
     | '/setting/api-token'
+    | '/setting/credit-keys'
     | '/setting/exchange-rate'
     | '/setting/faq'
     | '/setting/home-page-slide-show'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/_auth/product/product-categories'
     | '/_auth/product/products'
     | '/_auth/setting/api-token'
+    | '/_auth/setting/credit-keys'
     | '/_auth/setting/exchange-rate'
     | '/_auth/setting/faq'
     | '/_auth/setting/home-page-slide-show'
@@ -503,6 +515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSettingExchangeRateRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/setting/credit-keys': {
+      id: '/_auth/setting/credit-keys'
+      path: '/setting/credit-keys'
+      fullPath: '/setting/credit-keys'
+      preLoaderRoute: typeof AuthSettingCreditKeysRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/setting/api-token': {
       id: '/_auth/setting/api-token'
       path: '/setting/api-token'
@@ -627,6 +646,7 @@ interface AuthRouteChildren {
   AuthProductProductCategoriesRoute: typeof AuthProductProductCategoriesRoute
   AuthProductProductsRoute: typeof AuthProductProductsRoute
   AuthSettingApiTokenRoute: typeof AuthSettingApiTokenRoute
+  AuthSettingCreditKeysRoute: typeof AuthSettingCreditKeysRoute
   AuthSettingExchangeRateRoute: typeof AuthSettingExchangeRateRoute
   AuthSettingFaqRoute: typeof AuthSettingFaqRoute
   AuthSettingHomePageSlideShowRoute: typeof AuthSettingHomePageSlideShowRoute
@@ -658,6 +678,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthProductProductCategoriesRoute: AuthProductProductCategoriesRoute,
   AuthProductProductsRoute: AuthProductProductsRoute,
   AuthSettingApiTokenRoute: AuthSettingApiTokenRoute,
+  AuthSettingCreditKeysRoute: AuthSettingCreditKeysRoute,
   AuthSettingExchangeRateRoute: AuthSettingExchangeRateRoute,
   AuthSettingFaqRoute: AuthSettingFaqRoute,
   AuthSettingHomePageSlideShowRoute: AuthSettingHomePageSlideShowRoute,

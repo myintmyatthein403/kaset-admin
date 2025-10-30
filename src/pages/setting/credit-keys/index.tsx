@@ -1,4 +1,4 @@
-import { type MEDIA, type PLATFORM } from "@/common/types/type";
+import { type CREDIT_KEY } from "@/common/types/type";
 import { ConfirmDeleteDialog } from "@/components/custom/dialog/confirm-delete-dialog";
 import { ActionSheet } from "@/components/custom/sheet/sheet";
 import { BaseContentLayout } from "@/components/layouts/base/base-content-layout";
@@ -11,11 +11,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Edit2, Trash, Plus } from "lucide-react";
 import { useState } from "react"
 import { toast } from "sonner";
-import { PlatformForm } from "./components/action-form";
-import type { PlatformSchemaType } from "@/common/schemas/platform.schema";
-import { config } from "@/common/config/config";
+import { CreditKeyForm } from "./components/action-form";
+import type { CreditKeySchemaType } from "@/common/schemas/credit-key.schema";
 
-export const PlatfromPage = () => {
+export const CreditKeyPage = () => {
   const {
     data,
     isPending,
@@ -23,11 +22,10 @@ export const PlatfromPage = () => {
     createMutation,
     updateMutation,
     deleteMutation,
-    uploadMutation
-  } = useBaseHook<PlatformSchemaType>('platforms', '/platforms')
+  } = useBaseHook<CreditKeySchemaType>('credit-keys', '/credit-keys')
 
   const [open, setOpen] = useState<boolean>(false);
-  const [editedItem, setEditedItem] = useState<PLATFORM | null>(null);
+  const [editedItem, setEditedItem] = useState<CREDIT_KEY | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
@@ -44,26 +42,19 @@ export const PlatfromPage = () => {
   const form = useForm({
     defaultValues: {
       name: "",
-      icon: null
     },
     onSubmit: async ({ value }) => {
       try {
-        let iconId = editedItem?.icon?.id || "";
 
-        if (value.icon) {
-          const uploadImage = await uploadMutation.mutateAsync(value.icon);
-          iconId = uploadImage.id;
-        }
         const payload = {
           name: value.name,
-          icon: iconId ? { id: iconId } : undefined
         }
 
         if (editedItem) {
           await updateMutation.mutateAsync({ ...payload, id: editedItem.id });
           setEditedItem(null);
         } else {
-          await createMutation.mutateAsync(payload as PlatformSchemaType);
+          await createMutation.mutateAsync(payload as CreditKeySchemaType);
         }
         setOpen(false);
         form.reset();
@@ -75,7 +66,7 @@ export const PlatfromPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: PLATFORM) => {
+  const handleEdit = (item: CREDIT_KEY) => {
     setEditedItem(item);
     form.setFieldValue("name", item.name);
   }
@@ -84,7 +75,7 @@ export const PlatfromPage = () => {
   if (isPending) return <h1>Loading...</h1>
   if (error) return <h1>Failed to Fetch...</h1>
 
-  const columns: ColumnDef<PLATFORM>[] = [
+  const columns: ColumnDef<CREDIT_KEY>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -108,16 +99,6 @@ export const PlatfromPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "icon",
-      header: "Icon",
-      cell: ({ row }) => {
-        const media = row.getValue('icon') as MEDIA;
-        if (!media || !media.url) return null;
-        const imgSrc = `${config.BASE_MEDIA_URL}${media.url}`;
-        return <img src={imgSrc} alt="home-slide-show" className="w-15 h-15 rounded-full" />;
-      },
-    },
-    {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => (
@@ -128,7 +109,7 @@ export const PlatfromPage = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const item = row.original as PLATFORM;
+        const item = row.original as CREDIT_KEY;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -158,7 +139,7 @@ export const PlatfromPage = () => {
   return (
     <>
       <BaseContentLayout
-        title="Platform"
+        title="Credit Keys"
         actionButton={
           <Button variant='outline' type="button" onClick={() => {
             setEditedItem(null);
@@ -170,7 +151,7 @@ export const PlatfromPage = () => {
         }
         dialogTitle="Create"
         dialogDescription=""
-        createForm={<PlatformForm form={form} />}
+        createForm={<CreditKeyForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -188,9 +169,9 @@ export const PlatfromPage = () => {
       />
 
       <ActionSheet
-        title="Edit Platform"
+        title="Edit Credit Key"
         description=""
-        updateForm={<PlatformForm form={form} />}
+        updateForm={<CreditKeyForm form={form} />}
         onFormSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

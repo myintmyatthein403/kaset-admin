@@ -25,7 +25,9 @@ import {
   List,
   Currency,
   Sparkles,
-  Headphones
+  Headphones,
+  KeyIcon,
+  Feather
 } from "lucide-react";
 import { title } from "process";
 
@@ -172,6 +174,11 @@ export const sidebarGroups = [
         title: "Platform",
         url: "/setting/platforms",
         icon: Globe
+      },
+      {
+        title: "Credit Key",
+        url: "/setting/credit-keys",
+        icon: Feather
       },
       {
         title: "Social Link",
