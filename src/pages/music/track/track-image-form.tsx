@@ -19,7 +19,7 @@ export const TrackImageForm = ({ form }: TrackImageFormProps) => {
         )}
       </form.Field>
 
-      {/* Track Cover Image Field (Single Select) */}
+      {/* Track Cover Image Field (Single Select) 
       <form.Field name="trackCoverImage">
         {(field: any) => (
           <FileUploader
@@ -29,7 +29,7 @@ export const TrackImageForm = ({ form }: TrackImageFormProps) => {
             setFile={field.handleChange}
           />
         )}
-      </form.Field>
+      </form.Field> */}
 
       {/* BTS Images Field (Multi-Select) 
       <form.Field name="btsImages">
