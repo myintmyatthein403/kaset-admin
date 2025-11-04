@@ -69,12 +69,17 @@ export const ProductPage = () => {
           }))
           productImageIds = createdFiles.map((file) => ({ id: file }))
         }
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         const finalPayload = {
           ...restValues,
           ...(variants && variants.length > 0 && {
             variations: variants.map((v: any) => {
-              
-              return v
+              const { id, ...rest } = v;
+              if (uuidRegex.test(id)) {
+                return v;
+              } else {
+                return rest
+              }
             })
           }),
           ...(productImageIds && productImageIds.length > 0 && { product_images: productImageIds })
