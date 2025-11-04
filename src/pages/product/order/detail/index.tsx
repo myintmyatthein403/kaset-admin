@@ -11,6 +11,7 @@ import { config } from "@/common/config/config";
 import { formatISOTimestamp } from "@/common/utils/time.util";
 import { useNavigate } from "@tanstack/react-router";
 import { ChangeOrderStatus } from "./component/change-order-status";
+import { ChangePaymentStatus } from "./component/change-payment-status";
 
 interface OrderDetailProps {
   orderId: string;
@@ -89,7 +90,7 @@ export const OrderDetail = ({
           <CardTitle>
             <div className="flex justify-between items-center">
               <div className="flex gap-6 items-center">
-                <h3 className="text-xl">Order #{orderId}</h3>
+                <h3 className="text-xl">Order #{data?.order_id}</h3>
                 <h4 className="text-md text-gray-500">{formatISOTimestamp(data?.createdAt)}</h4>
                 <h4 className="text-md text-gray-500">{data?.order_items?.length} products</h4>
               </div>
@@ -115,8 +116,9 @@ export const OrderDetail = ({
               <OrderProcessTimeline status={data?.order_status} />
               <DataTable columns={columns} data={data?.order_items} />
             </div>
-            <div>
+            <div className="flex flex-col gap-4">
               <ChangeOrderStatus orderId={orderId} status={data?.order_status} />
+              <ChangePaymentStatus orderId={orderId} status={data?.payment_status} />
             </div>
           </div>
         </CardContent>

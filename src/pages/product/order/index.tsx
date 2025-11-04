@@ -29,13 +29,8 @@ export const OrderPage = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<GENRE | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
-  const [selectedItemId, setSelectedItemId] = useState<string>("");
+  const [selectedItemId,] = useState<string>("");
   const navigate = useNavigate()
-
-  const handleDelete = (id: string) => {
-    setIsDeleteDialogOpen(true);
-    setSelectedItemId(id);
-  }
 
   const handleConfirmDelete = () => {
     deleteMutation.mutate(selectedItemId);
@@ -65,11 +60,6 @@ export const OrderPage = () => {
     }
   }) as any;
 
-  const handleEdit = (item: GENRE) => {
-    setEditedItem(item);
-    form.setFieldValue("name", item.name);
-    form.setFieldValue("description", item.description);
-  }
 
   const handleClick = (rowData: any) => {
     navigate({ to: '/product/orders/$orderId', params: { orderId: rowData.id } });
@@ -102,10 +92,10 @@ export const OrderPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "id",
+      accessorKey: "order_id",
       header: "Order Number",
       cell: ({ row }) => (
-        <div>{row.getValue("id")}</div>
+        <div>{row.getValue("order_id")}</div>
       ),
     },
     {
