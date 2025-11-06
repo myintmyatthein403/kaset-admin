@@ -17,10 +17,6 @@ const paymentStatusOptions = [
     value: "cancelled"
   },
   {
-    label: "cancelled",
-    value: "cancelled"
-  },
-  {
     label: "refund",
     value: "refund"
   },
